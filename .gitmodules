@@ -1,6 +1,6 @@
 [submodule "qtredmine"]
 	path = libqtredmine
-	url = https://github.com/fathomssen/qtredmine.git
+	url = https://github.com/SrAlberto/qtredmine.git
 [submodule "open-iconic"]
 	path = gui/open-iconic
 	url = https://github.com/iconic/open-iconic.git
