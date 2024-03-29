@@ -486,8 +486,8 @@ MainWindow::initTrayIcon()
                              this, SLOT(startStop()) );
         trayMenu->addAction( QIcon(":/open-iconic/svg/plus.svg"), tr("&New issue"),
                              this, SLOT(createIssue()) );
-        trayMenu->addAction( QIcon(":/open-iconic/svg/cog.svg"), tr("S&ettings"),
-                             [this](){display(); settings_->display();} );
+        // trayMenu->addAction( QIcon(":/open-iconic/svg/cog.svg"), tr("S&ettings"),
+                             // [this](){display(); settings_->display();} );
         trayMenu->addAction( QIcon(":/open-iconic/svg/power-standby.svg"), tr("E&xit"), this, SLOT(exit()) );
         trayIcon_->setContextMenu( trayMenu );
 
@@ -702,7 +702,7 @@ MainWindow::loadIssue( int issueId, bool startTimer, bool saveNewIssue )
         }
 
         loadLatestActivity();
-        loadIssueStatuses();
+        loadIssueStatuses(issueId);
 
         updateTitle();
 
@@ -719,7 +719,7 @@ MainWindow::loadIssue( int issueId, bool startTimer, bool saveNewIssue )
 }
 
 void
-MainWindow::loadIssueStatuses()
+MainWindow::loadIssueStatuses(int issueId)
 {
     ENTER();
 
@@ -763,7 +763,7 @@ MainWindow::loadIssueStatuses()
         qml("issueStatus")->setProperty( "currentIndex", currentIndex );
 
         CBRETURN();
-    } );
+    }, issueId );
 
     RETURN();
 }
@@ -1190,7 +1190,7 @@ MainWindow::refreshGui()
         recentIssues_.push_back( issue );
 
     loadLatestActivity();
-    loadIssueStatuses();
+    loadIssueStatuses(data->issueId);
 
     updateTitle();
 
@@ -1525,7 +1525,7 @@ MainWindow::updateIssueStatus( int statusId )
         message( tr("Issue updated") );
 
         issue_.status.id = statusId;
-        loadIssueStatuses();
+        loadIssueStatuses(issue_.id);
 
         CBRETURN();
     },
