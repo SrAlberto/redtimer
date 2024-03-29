@@ -757,6 +757,12 @@ MainWindow::loadIssueStatuses(int issueId)
             issueStatusModel_.push_back( SimpleItem(issueStatus) );
         }
 
+        if  (issueId != NULL_ID && issueStatuses.length() == 0)
+        {
+            issueStatusModel_.push_back( issue_.status );
+            currentIndex = 1;
+        }
+
         DEBUG()(issueStatusModel_)(issue_.status.id)(currentIndex);
 
         qml("issueStatus")->setProperty( "currentIndex", -1 );
