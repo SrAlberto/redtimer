@@ -73,7 +73,7 @@ Thumbs.db
 # gh-pages
 html
 
-RedTimer
+# RedTimer
 /*.ini
 /redtimer_plugin_import.cpp
 /redtimer_qml_plugin_import.cpp
@@ -81,3 +81,6 @@ RedTimer
 /Release/.qmake.stash
 cli/redtimercli
 dist
+
+*/debug
+*/release

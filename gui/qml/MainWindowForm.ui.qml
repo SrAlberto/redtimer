@@ -195,13 +195,35 @@ Item {
                 id: counter
                 objectName: "counter"
                 text: "00:00:00"
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 Layout.fillWidth: true
 
                 MouseArea {
                     id: counterMouseArea
                     anchors.fill: parent
                 }
+            }
+
+            // TODO: Desarrollar codigo
+            ComboBox {
+                id: doneRatio
+                Layout.fillWidth: true
+                objectName: "doneRatio"
+                model: doneRatioModel
+                textRole: "name"
+            }
+
+            // TODO: Desarrollar codigo
+            Button {
+                id: aditionalOptions
+                Layout.preferredHeight: 24
+                Layout.preferredWidth: 24
+                objectName: "aditionalOptions"
+                isDefault: true
+                iconSource: "qrc:/open-iconic/svg/external-link.svg"
+                tooltip: "Open aditional option modal"
+                focus: false
+                activeFocusOnPress: true
             }
         }
 

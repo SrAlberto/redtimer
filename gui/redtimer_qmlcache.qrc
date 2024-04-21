@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<RCC>
+    <qresource prefix="/">
+        <file alias="icons/clock.svg">icons/clock.svg</file>
+        <file alias="icons/clock_play.svg">icons/clock_play.svg</file>
+        <file alias="icons/clock_stop.svg">icons/clock_stop.svg</file>
+        <file alias="icons/clock_red.svg">icons/clock_red.svg</file>
+        <file alias="icons/clock_red_play.svg">icons/clock_red_play.svg</file>
+        <file alias="icons/clock_red_stop.svg">icons/clock_red_stop.svg</file>
+        <file alias="icons/clock_red.icns">icons/clock_red.icns</file>
+        <file alias="open-iconic/svg/media-play.svg">open-iconic/svg/media-play.svg</file>
+        <file alias="open-iconic/svg/list.svg">open-iconic/svg/list.svg</file>
+        <file alias="open-iconic/svg/cog.svg">open-iconic/svg/cog.svg</file>
+        <file alias="open-iconic/svg/media-stop.svg">open-iconic/svg/media-stop.svg</file>
+        <file alias="open-iconic/svg/reload.svg">open-iconic/svg/reload.svg</file>
+        <file alias="open-iconic/svg/power-standby.svg">open-iconic/svg/power-standby.svg</file>
+        <file alias="open-iconic/svg/plus.svg">open-iconic/svg/plus.svg</file>
+        <file alias="open-iconic/svg/vertical-align-bottom.svg">open-iconic/svg/vertical-align-bottom.svg</file>
+        <file alias="open-iconic/svg/vertical-align-top.svg">open-iconic/svg/vertical-align-top.svg</file>
+        <file alias="open-iconic/svg/signal.svg">open-iconic/svg/signal.svg</file>
+        <file alias="open-iconic/svg/layers.svg">open-iconic/svg/layers.svg</file>
+        <file alias="qml/IssueCreator.qml">qml/IssueCreator.qml</file>
+        <file alias="qml/IssueCreatorForm.ui.qml">qml/IssueCreatorForm.ui.qml</file>
+        <file alias="qml/IssueSelector.qml">qml/IssueSelector.qml</file>
+        <file alias="qml/IssueSelectorForm.ui.qml">qml/IssueSelectorForm.ui.qml</file>
+        <file alias="qml/MainWindow.qml">qml/MainWindow.qml</file>
+        <file alias="qml/MainWindowForm.ui.qml">qml/MainWindowForm.ui.qml</file>
+        <file alias="qml/MessageBox.qml">qml/MessageBox.qml</file>
+        <file alias="qml/MessageBoxForm.ui.qml">qml/MessageBoxForm.ui.qml</file>
+        <file alias="qml/ProfileSelector.qml">qml/ProfileSelector.qml</file>
+        <file alias="qml/ProfileSelectorForm.ui.qml">qml/ProfileSelectorForm.ui.qml</file>
+        <file alias="qml/Settings.qml">qml/Settings.qml</file>
+        <file alias="qml/SettingsForm.ui.qml">qml/SettingsForm.ui.qml</file>
+        <file alias="open-iconic/svg/external-link.svg">open-iconic/svg/external-link.svg</file>
+    </qresource>
+</RCC>

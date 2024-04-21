@@ -30,5 +30,6 @@
         <file>qml/ProfileSelectorForm.ui.qml</file>
         <file>qml/Settings.qml</file>
         <file>qml/SettingsForm.ui.qml</file>
+        <file>open-iconic/svg/external-link.svg</file>
     </qresource>
 </RCC>

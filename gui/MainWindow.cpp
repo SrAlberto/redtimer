@@ -706,7 +706,10 @@ MainWindow::loadIssue( int issueId, bool startTimer, bool saveNewIssue )
 
         updateTitle();
 
-        if( startTimer )
+        // bool issueLocked = qml("issueStatus")->property( "enabled" ).toBool();
+        bool issueLocked = false;
+
+        if( startTimer && !issueLocked )
             start();
 
         saveSettings();
@@ -757,15 +760,18 @@ MainWindow::loadIssueStatuses(int issueId)
             issueStatusModel_.push_back( SimpleItem(issueStatus) );
         }
 
+        qml("issueStatus")->setProperty( "enabled", true );
+
         if  (issueId != NULL_ID && issueStatuses.length() == 0)
         {
             issueStatusModel_.push_back( issue_.status );
             currentIndex = 1;
+            qml("issueStatus")->setProperty( "enabled", false );
         }
 
         DEBUG()(issueStatusModel_)(issue_.status.id)(currentIndex);
 
-        qml("issueStatus")->setProperty( "currentIndex", -1 );
+        // qml("issueStatus")->setProperty( "currentIndex", -1 );
         qml("issueStatus")->setProperty( "currentIndex", currentIndex );
 
         CBRETURN();
