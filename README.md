@@ -60,3 +60,11 @@ This requires for you to have Qt 5.5+ and GCC 4.8.4+ installed and in your path.
 
 Alternatively, you can use a QtCreator distribution from https://www.qt.io. In QtCreator, you can open the
 project file `RedTimer.pro` and start the build.
+
+
+TODO
+----
+
+[] View/Edit/Add/ Notes and private notes
+[X] Done Ratio
+[]  Dynamic Done Ratio
