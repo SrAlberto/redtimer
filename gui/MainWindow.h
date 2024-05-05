@@ -357,7 +357,7 @@ private slots:
     /**
      * @brief Refresh issue statuses
      */
-    void loadIssueStatuses(int issueId = NULL_ID);
+    void loadIssueStatuses();
 
     /**
      * @brief Open the issue selector and load issue
