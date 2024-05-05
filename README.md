@@ -65,6 +65,13 @@ project file `RedTimer.pro` and start the build.
 TODO
 ----
 
+- [X] Done ratio
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Dynamic done ratio values
+- [ ] New modal to edit dates, asignee
+- [ ] View/Edit Asignee
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; When status change to "Pendiente de Información" show on a new line the asignee dropdown
 - [ ] View/Edit/Add/ Notes and private notes
-- [X] Done Ratio
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Dynamic Done Ratio
+- [ ] New shortcut to load issue from id from clipboard
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; If not id on clipboard, open new redtimer with focus on quick pick
+- [ ] New button to copy issue id
+- [ ] New button to copy issue url
