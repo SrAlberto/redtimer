@@ -67,4 +67,4 @@ TODO
 
 - [ ] View/Edit/Add/ Notes and private notes
 - [X] Done Ratio
-- [ ]  Dynamic Done Ratio
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Dynamic Done Ratio
