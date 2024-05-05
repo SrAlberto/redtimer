@@ -65,6 +65,6 @@ project file `RedTimer.pro` and start the build.
 TODO
 ----
 
-[] View/Edit/Add/ Notes and private notes
-[X] Done Ratio
-[]  Dynamic Done Ratio
+- [] View/Edit/Add/ Notes and private notes
+- [X] Done Ratio
+- []  Dynamic Done Ratio
