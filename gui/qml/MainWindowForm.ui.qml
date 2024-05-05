@@ -196,7 +196,8 @@ Item {
                 objectName: "counter"
                 text: "00:00:00"
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                Layout.fillWidth: true
+                // Layout.fillWidth: true
+                Layout.preferredWidth: 70
 
                 MouseArea {
                     id: counterMouseArea
@@ -204,13 +205,41 @@ Item {
                 }
             }
 
-            // TODO: Desarrollar codigo
-            ComboBox {
-                id: doneRatio
+            Item {
                 Layout.fillWidth: true
-                objectName: "doneRatio"
-                model: doneRatioModel
-                textRole: "name"
+                height: parent.height
+
+                ProgressBar {
+                    id: doneRatioProgress
+                    objectName: "doneRatioProgress"
+                    height: 24
+                    maximumValue: 100
+
+                    style: ProgressBarStyle {
+                        progress: Rectangle {
+                            color: "lightgreen"
+                            border.color: "green"
+                        }
+                    }
+                }
+
+                ComboBox {
+                    id: doneRatioCombo
+                    Layout.fillWidth: true
+                    width: doneRatioProgress.width
+                    objectName: "doneRatioCombo"
+                    model: doneRatioModel
+                    textRole: "name"
+                    visible: false
+                }
+
+                MouseArea {
+                    id: doneRatioArea
+                    width: doneRatioProgress.width
+                    height: doneRatioProgress.height
+                    // @disable-check M222 // Disable error
+                    onClicked: doneRatioCombo.__popup.toggleShow()
+                }
             }
 
             // TODO: Desarrollar codigo

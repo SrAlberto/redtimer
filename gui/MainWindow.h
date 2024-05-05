@@ -112,6 +112,9 @@ private:
     /// Current issue
     qtredmine::Issue issue_;
 
+    /// Cached done ratio
+    SimpleModel doneRatioModel_;
+
     /// Cached issue statuses
     SimpleModel issueStatusModel_;
 
@@ -224,6 +227,11 @@ protected:
     bool event( QEvent* event );
 
 private slots:
+    /**
+     * @brief Slot to a selected done ratio
+     */
+    void doneRatioSelected( int index );
+
     /**
      * @brief Slot to a selected activity
      */
@@ -355,6 +363,11 @@ private slots:
     void refreshCounter();
 
     /**
+     * @brief Refresh issue done ratios
+     */
+    void loadDoneRatios();
+
+    /**
      * @brief Refresh issue statuses
      */
     void loadIssueStatuses();
@@ -403,11 +416,25 @@ private slots:
     void trayEvent( QSystemTrayIcon::ActivationReason reason );
 
     /**
+     * @brief Update issue done ratio for current issue
+     *
+     * @param doneRatio Issue done ratio
+     */
+    void updateIssueDoneRatio( double doneRatio );
+    
+    /**
      * @brief Update issue status for current issue
      *
      * @param statusId Issue status ID
      */
     void updateIssueStatus( int statusId );
+    
+    /**
+     * @brief Update current issue
+     *
+     * @param issue Issue object
+     */
+    void updateIssue( qtredmine::Issue issue, double doneRatio = NULL_ID, int statusId = NULL_ID );
 
     /**
      * @brief Update the title and tray icon tool tip

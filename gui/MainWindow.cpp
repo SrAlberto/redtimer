@@ -82,6 +82,7 @@ namespace redtimer
         // Notify upon connection status change
         connect(redmine_, &SimpleRedmineClient::connectionChanged, this, &MainWindow::notifyConnectionStatus);
 
+        setCtxProperty("doneRatioModel", &doneRatioModel_);
         setCtxProperty("activityModel", &activityModel_);
         setCtxProperty("issueStatusModel", &issueStatusModel_);
         setCtxProperty("recentIssuesModel", &recentIssues_);
@@ -109,6 +110,9 @@ namespace redtimer
 
         // Connect the start/stop button
         connect(qml("startStop"), SIGNAL(clicked()), this, SLOT(startStop()));
+
+        // Connect the done ratio selected signal to the doneRatioSelected slot
+        connect(qml("doneRatioCombo"), SIGNAL(activated(int)), this, SLOT(doneRatioSelected(int)));
 
         // Connect the activity selected signal to the activitySelected slot
         connect(qml("activity"), SIGNAL(activated(int)), this, SLOT(activitySelected(int)));
@@ -151,6 +155,21 @@ namespace redtimer
         initServer();
 
         initialised_ = true;
+
+        RETURN();
+    }
+
+    void
+    MainWindow::doneRatioSelected(int index)
+    {
+        ENTER()
+        (index);
+
+        issue_.doneRatio = doneRatioModel_.at(index).id();
+        DEBUG()
+        (issue_.doneRatio);
+
+        updateIssueDoneRatio(issue_.doneRatio);
 
         RETURN();
     }
@@ -709,11 +728,12 @@ namespace redtimer
 
         loadLatestActivity();
         loadIssueStatuses();
+        loadDoneRatios();
 
         updateTitle();
 
-        // bool issueLocked = qml("issueStatus")->property( "enabled" ).toBool();
-        bool issueLocked = false;
+        bool issueLocked = qml("issueStatus")->property( "enabled" ).toBool();
+        // bool issueLocked = false;
 
         if( startTimer && !issueLocked )
             start();
@@ -722,6 +742,70 @@ namespace redtimer
 
         CBRETURN(); },
                                 issueId);
+
+        RETURN();
+    }
+
+    void
+    MainWindow::loadDoneRatios()
+    {
+        ENTER();
+
+        if (!connected())
+            RETURN();
+
+        // TODO: A desarrollar
+        // ++callbackCounter_;
+        // redmine_->retrieveIssueStatuses( [&]( IssueStatuses issueStatuses, RedmineError redmineError,
+        //                                       QStringList errors )
+        // {
+        //     CBENTER()(redmineError)(errors);
+
+        //     if( !connected() )
+        //         CBRETURN();
+
+        //     if( redmineError != RedmineError::NO_ERR )
+        //     {
+        //         QString errorMsg = tr( "Could not load issue statuses." );
+        //         for( const auto& error : errors )
+        //             errorMsg.append("\n").append(error);
+
+        //         message( errorMsg, QtCriticalMsg );
+        //         CBRETURN();
+        //     }
+
+        int currentIndex = 0;
+
+        QList<Item> doneRatios;
+        doneRatios.append({0, "0 %"});
+        doneRatios.append({10, "10 %"});
+        doneRatios.append({20, "20 %"});
+        doneRatios.append({30, "30 %"});
+        doneRatios.append({40, "40 %"});
+        doneRatios.append({50, "50 %"});
+        doneRatios.append({60, "60 %"});
+        doneRatios.append({70, "70 %"});
+        doneRatios.append({80, "80 %"});
+        doneRatios.append({90, "90 %"});
+        doneRatios.append({100, "100 %"});
+
+        doneRatioModel_.clear();
+        for (const auto &doneRatio : doneRatios)
+        {
+            if (doneRatio.id == issue_.doneRatio)
+                currentIndex = doneRatioModel_.rowCount();
+
+            doneRatioModel_.push_back(SimpleItem(doneRatio));
+        }
+
+        DEBUG()
+        (doneRatioModel_)(issue_.doneRatio)(currentIndex);
+
+        qml("doneRatioCombo")->setProperty("currentIndex", currentIndex);
+        qml("doneRatioProgress")->setProperty("value", issue_.doneRatio);
+
+        //     CBRETURN();
+        // }, issue_.id );
 
         RETURN();
     }
@@ -755,6 +839,8 @@ namespace redtimer
 
         int currentIndex = 0;
 
+        qml("issueStatus")->setProperty( "enabled", true );
+
         issueStatusModel_.clear();
         issueStatusModel_.push_back( SimpleItem(NULL_ID, "Choose issue status") );
         for( const auto& issueStatus : issueStatuses )
@@ -764,8 +850,6 @@ namespace redtimer
 
             issueStatusModel_.push_back( SimpleItem(issueStatus) );
         }
-
-        qml("issueStatus")->setProperty( "enabled", true );
 
         if  (issue_.id != NULL_ID && issueStatuses.length() == 0)
         {
@@ -1205,6 +1289,7 @@ namespace redtimer
 
         loadLatestActivity();
         loadIssueStatuses();
+        loadDoneRatios();
 
         updateTitle();
 
@@ -1509,6 +1594,23 @@ namespace redtimer
     }
 
     void
+    MainWindow::updateIssueDoneRatio(double doneRatio)
+    {
+        ENTER();
+
+        if (doneRatio == NULL_ID || issue_.id == NULL_ID)
+            RETURN();
+
+        Issue issue;
+        issue.doneRatio = doneRatio;
+        issue.status.id = issue_.status.id;
+
+        updateIssue(issue, doneRatio, issue_.status.id);
+
+        RETURN();
+    }
+
+    void
     MainWindow::updateIssueStatus(int statusId)
     {
         ENTER();
@@ -1517,32 +1619,57 @@ namespace redtimer
             RETURN();
 
         Issue issue;
+        issue.doneRatio = issue_.doneRatio;
         issue.status.id = statusId;
+
+        updateIssue(issue, issue_.doneRatio, statusId);
+
+        RETURN();
+    }
+
+    void
+    MainWindow::updateIssue(Issue issue, double doneRatio, int statusId)
+    {
+        issue.id = issue_.id;
 
         ++callbackCounter_;
         redmine_->sendIssue(
             issue, [=](bool success, int id, RedmineError errorCode, QStringList errors)
             {
-        CBENTER();
+                CBENTER();
 
-        DEBUG()(success)(id)(errorCode)(errors);
+                DEBUG()(success)(id)(errorCode)(errors);
 
-        if( !success )
-        {
-            QString errorMsg = tr( "Could not update the issue." );
-            for( const auto& error : errors )
-                errorMsg.append("\n").append(error);
+                if( !success )
+                {
+                    QString errorMsg = tr( "Could not update the issue." );
+                    for( const auto& error : errors )
+                        errorMsg.append("\n").append(error);
 
-            message( errorMsg, QtCriticalMsg );
-            CBRETURN();
-        }
+                    message( errorMsg, QtCriticalMsg );
+                    CBRETURN();
+                }
 
-        message( tr("Issue updated") );
+                message( tr("Issue updated") );
 
-        issue_.status.id = statusId;
-        loadIssueStatuses();
+                if (doneRatio != NULL_ID)
+                    issue_.doneRatio = doneRatio;
+                // {
+                    // issue_.doneRatio = doneRatio;
+                    // loadDoneRatios();
+                // }
 
-        CBRETURN(); },
+                if (statusId != NULL_ID)
+                    issue_.status.id = statusId;
+                // {
+                    // refreshGui();
+                    // loadIssueStatuses();
+                // }
+
+                if (doneRatio != NULL_ID || statusId != NULL_ID)
+                    refreshGui();
+
+                CBRETURN(); },
             issue_.id);
 
         RETURN();
