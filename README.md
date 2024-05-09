@@ -66,9 +66,10 @@ TODO
 ----
 
 - [X] Done ratio
-- [ ] View/Edit Assignee
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp; When status change to "Pendiente de Información" show on a new line the assignee dropdown
-- [ ] New modal to edit dates, assignee
+- [X] Adjust done ratio width
+- [ ] View/Edit Assigned to
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; When status change to "Pendiente de Información" show on a new line the assigned to dropdown
+- [ ] New modal to edit dates, assigned to
 - [ ] View/Edit/Add/ Notes and private notes
 - [ ] New shortcut to load issue from id from clipboard
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp; If not id on clipboard, open new redtimer with focus on quick pick
