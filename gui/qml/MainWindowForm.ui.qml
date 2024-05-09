@@ -14,8 +14,11 @@ Item {
     property alias activity: activity
     property alias counter: counter
     property alias counterMouseArea: counterMouseArea
+    property alias doneRatioArea: doneRatioArea
     property alias description: description
+    property alias doneRatioCombo: doneRatioCombo
     property alias issueStatus: issueStatus
+    property alias assignedTo: assignedTo
     property alias quickPick: quickPick
     property alias selectIssue: selectIssue
     property alias settings: settings
@@ -212,6 +215,7 @@ Item {
                 ProgressBar {
                     id: doneRatioProgress
                     objectName: "doneRatioProgress"
+                    anchors.fill: parent
                     height: 24
                     maximumValue: 100
 
@@ -235,10 +239,8 @@ Item {
 
                 MouseArea {
                     id: doneRatioArea
-                    width: doneRatioProgress.width
+                    anchors.fill: parent
                     height: doneRatioProgress.height
-                    // @disable-check M222 // Disable error
-                    onClicked: doneRatioCombo.__popup.toggleShow()
                 }
             }
 
@@ -269,6 +271,15 @@ Item {
             Layout.fillWidth: true
             objectName: "issueStatus"
             model: issueStatusModel
+            textRole: "name"
+        }
+
+        // TODO: Desarrollar codigo
+        ComboBox {
+            id: assignedTo
+            Layout.fillWidth: true
+            objectName: "assignedTo"
+            model: assignedToModel
             textRole: "name"
         }
 

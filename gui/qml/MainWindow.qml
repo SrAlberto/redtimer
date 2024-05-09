@@ -20,18 +20,13 @@ Item {
         mouse.accepted = false
     }
 
-    function quickPickToggle()
-    {
-        console.log( "Quick pick" )
-    }
-
     Component.onCompleted: {
         mainForm.counter.Keys.pressed.connect( counterKeyEvent )
     }
 
     Connections {
         target: mainForm.counterMouseArea
-        onPressed: { counterMouseAreaEvent(mouse) }
+        onPressed: counterMouseAreaEvent(mouse)
     }
 
     Connections {
@@ -44,6 +39,11 @@ Item {
                 mainForm.quickPick.editText="<Enter or select issue>"
             }
         }
+    }
+
+    Connections {
+        target: mainForm.doneRatioArea
+        onPressed: mainForm.doneRatioCombo.__popup.toggleShow()
     }
 
     MainWindowForm {
