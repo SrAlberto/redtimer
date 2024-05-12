@@ -16,6 +16,8 @@
 #include <QObject>
 #include <QSystemSemaphore>
 #include <QTime>
+#include <QDesktopServices>
+#include <QClipboard>
 
 using namespace qtredmine;
 using namespace std;
@@ -94,6 +96,9 @@ namespace redtimer
 
         // Connect the create issue button
         connect(qml("createIssue"), SIGNAL(clicked()), this, SLOT(createIssue()));
+
+        // Connect the open issue button
+        connect(qml("openIssue"), SIGNAL(clicked()), this, SLOT(openIssue()));
 
         // Connect the settings button
         connect(qml("settings"), SIGNAL(clicked()), settings_, SLOT(display()));
@@ -310,6 +315,29 @@ namespace redtimer
                 {
         loadIssue( issueId, true, true );
         profileData()->projectId = issueCreator->getProjectId(); });
+
+        RETURN();
+    }
+
+    void
+    MainWindow::openIssue()
+    {
+        ENTER();
+
+        if (issue_.id == NULL_ID)
+            RETURN();
+
+        QString baseUrl = profileData()->url;
+
+        if (!baseUrl.endsWith("/"))
+            baseUrl += "/";
+
+        baseUrl += QString::asprintf("issues/%d", issue_.id);
+
+        QUrl url(baseUrl);
+
+        if (!QDesktopServices::openUrl(url))
+            RETURN();
 
         RETURN();
     }
@@ -621,7 +649,8 @@ namespace redtimer
         ENTER()
         (index);
 
-        loadIssue(recentIssues_.at(index).id);
+        bool startAfterLoadIssue = profileData()->startAfterLoadIssue;
+        loadIssue(recentIssues_.at(index).id, startAfterLoadIssue);
 
         RETURN();
     }
@@ -647,7 +676,37 @@ namespace redtimer
             RETURN();
         }
 
-        loadIssue(issueId);
+        bool startAfterLoadIssue = profileData()->startAfterLoadIssue;
+        loadIssue(issueId, startAfterLoadIssue);
+
+        RETURN();
+    }
+
+    void
+    MainWindow::loadIssueFromClipBoard()
+    {
+        ENTER();
+
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        bool ok;
+        int issueId = clipboard->text().toInt(&ok);
+
+        if (!ok)
+        {
+            message("Issue ID may consist of digits only", QtWarningMsg);
+            RETURN();
+        }
+
+        qml("startStop")->setProperty("focus", true);
+
+        if (!issueId)
+        {
+            qml("quickPick")->setProperty("editText", quickPick_);
+            RETURN();
+        }
+
+        bool startAfterLoadIssue = profileData()->startAfterLoadIssue;
+        loadIssue(issueId, startAfterLoadIssue);
 
         RETURN();
     }
@@ -761,8 +820,7 @@ namespace redtimer
 
                                     updateTitle();
 
-                                    bool issueLocked = qml("issueStatus")->property( "enabled" ).toBool();
-                                    // bool issueLocked = false;
+                                    bool issueLocked = !qml("issueStatus")->property( "enabled" ).toBool();
 
                                     if( startTimer && !issueLocked )
                                         start();
@@ -1047,7 +1105,7 @@ namespace redtimer
 
         function<void()> cb = [=]() { start(); };
 
-        bool startAtAssignedToMe = profileData() -> startAtAssignedToMe;
+        bool startAtAssignedToMe = profileData()->startAtAssignedToMe;
         if (!startAtAssignedToMe)
             cb = nullptr;
 
@@ -1497,8 +1555,10 @@ namespace redtimer
     {
         ENTER();
 
-        issueSelector_->setProjectId(profileData()->projectId);
-        issueSelector_->display();
+        loadIssueFromClipBoard();
+
+        // issueSelector_->setProjectId(profileData()->projectId);
+        // issueSelector_->display();
 
         RETURN();
     }

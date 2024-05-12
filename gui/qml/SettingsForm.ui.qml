@@ -108,6 +108,13 @@ ColumnLayout {
                 }
 
                 CheckBox {
+                    id: startAfterLoadIssue
+                    objectName: "startAfterLoadIssue"
+                    text: qsTr("Start timer after issue is loaded")
+                    Layout.columnSpan: 2
+                }
+
+                CheckBox {
                     id: startLocalServer
                     objectName: "startLocalServer"
                     text: qsTr("Start a local socket server")

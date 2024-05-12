@@ -75,7 +75,10 @@ TODO
 - [X] &nbsp;&nbsp;&nbsp;&nbsp; When status change to "Pendiente de Información" show on a new line the assigned to dropdown
 - [ ] New modal to edit dates, assigned to
 - [ ] View/Edit/Add/ Notes and private notes
-- [ ] New shortcut to load issue from id from clipboard
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp; If not id on clipboard, open new redtimer with focus on quick pick
+- [ ] Edit shortcut to load issue from id from clipboard, if not issue on clipboard open default modal
 - [ ] New button to copy issue id
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
 - [ ] New button to copy issue url
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
+- [X] New button to open issue url
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut

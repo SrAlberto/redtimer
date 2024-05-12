@@ -254,6 +254,11 @@ private slots:
     void createIssue();
 
     /**
+     * @brief Open the issue on the browser
+     */
+    void openIssue();
+
+    /**
      * @brief Get the current server name
      *
      * @todo Move to libredtimer
@@ -299,6 +304,13 @@ private slots:
      * Uses the issue ID from the quick pick text field.
      */
     void loadIssueFromTextField();
+
+    /**
+     * @brief Load issue from Redmine
+     *
+     * Uses the issue ID from the clipboard.
+     */
+    void loadIssueFromClipBoard();
 
     /**
      * @brief Load issue from Redmine

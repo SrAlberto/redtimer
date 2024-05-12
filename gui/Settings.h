@@ -60,6 +60,9 @@ struct ProfileData
     /// Start timer after is assigned to me
     bool startAtAssignedToMe;
 
+    /// Start timer after issue is loaded
+    bool startAfterLoadIssue;
+
     /// Start a local socket server
     bool startLocalServer;
 

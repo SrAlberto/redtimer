@@ -46,6 +46,18 @@ Item {
         }
 
         Button {
+            id: openIssue
+            width: 24
+            height: 24
+            objectName: "openIssue"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 26
+            anchors.left: parent.left
+            tooltip: "Open issue on browser"
+            iconSource: "qrc:/open-iconic/svg/external-link.svg"
+        }
+
+        Button {
             id: connectionStatus
             width: 24
             height: 24

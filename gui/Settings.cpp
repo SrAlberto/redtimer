@@ -168,19 +168,20 @@ Settings::applyProfileData( bool* reload )
     QString oldUrl = data->url;
 
     // Connection
-    data->apiKey            = qml("apikey")->property("text").toString();
-    data->ignoreSslErrors   = qml("ignoreSslErrors")->property("checked").toBool();
-    data->numRecentIssues   = qml("numRecentIssues")->property("text").toInt();
-    data->startAtAssignedToMe  = qml("startAtAssignedToMe")->property("checked").toBool();
-    data->startLocalServer  = qml("startLocalServer")->property("checked").toBool();
-    data->url               = qml("url")->property("text").toString();
-    data->useCustomFields   = qml("useCustomFields")->property("checked").toBool();
+    data->apiKey                = qml("apikey")->property("text").toString();
+    data->ignoreSslErrors       = qml("ignoreSslErrors")->property("checked").toBool();
+    data->numRecentIssues       = qml("numRecentIssues")->property("text").toInt();
+    data->startAtAssignedToMe   = qml("startAtAssignedToMe")->property("checked").toBool();
+    data->startAfterLoadIssue   = qml("startAfterLoadIssue")->property("checked").toBool();
+    data->startLocalServer      = qml("startLocalServer")->property("checked").toBool();
+    data->url                   = qml("url")->property("text").toString();
+    data->useCustomFields       = qml("useCustomFields")->property("checked").toBool();
 
     // Shortcuts
-    data->shortcutCreateIssue = qml("shortcutCreateIssue")->property("text").toString();
-    data->shortcutSelectIssue = qml("shortcutSelectIssue")->property("text").toString();
-    data->shortcutStartStop   = qml("shortcutStartStop")->property("text").toString();
-    data->shortcutToggle      = qml("shortcutToggle")->property("text").toString();
+    data->shortcutCreateIssue   = qml("shortcutCreateIssue")->property("text").toString();
+    data->shortcutSelectIssue   = qml("shortcutSelectIssue")->property("text").toString();
+    data->shortcutStartStop     = qml("shortcutStartStop")->property("text").toString();
+    data->shortcutToggle        = qml("shortcutToggle")->property("text").toString();
 
     // Interface
     data->useSystemTrayIcon = qml("useSystemTrayIcon")->property("checked").toBool();
@@ -356,6 +357,10 @@ Settings::loadProfileData()
                                  ? settings_.value("startAtAssignedToMe").toBool()
                                  : true;
 
+    data->startAfterLoadIssue = settings_.value("startAfterLoadIssue").isValid()
+                                 ? settings_.value("startAfterLoadIssue").toBool()
+                                 : true;
+
     data->startLocalServer = settings_.value("startLocalServer").isValid()
                            ? settings_.value("startLocalServer").toBool()
                            : true;
@@ -468,6 +473,7 @@ Settings::refresh()
     qml("ignoreSslErrors")->setProperty( "checked", profileData()->ignoreSslErrors );
     qml("numRecentIssues")->setProperty( "text", profileData()->numRecentIssues );
     qml("startAtAssignedToMe")->setProperty( "checked", profileData()->startAtAssignedToMe );
+    qml("startAfterLoadIssue")->setProperty( "checked", profileData()->startAfterLoadIssue );
     qml("startLocalServer")->setProperty( "checked", profileData()->startLocalServer );
     qml("url")->setProperty( "text", profileData()->url );
     qml("url")->setProperty( "cursorPosition", 0 );
@@ -531,6 +537,7 @@ Settings::saveProfileData()
     settings_.setValue( "ignoreSslErrors",      data->ignoreSslErrors );
     settings_.setValue( "numRecentIssues",      data->numRecentIssues );
     settings_.setValue( "startAtAssignedToMe",  data->startAtAssignedToMe );
+    settings_.setValue( "startAfterLoadIssue",  data->startAfterLoadIssue );
     settings_.setValue( "startLocalServer",     data->startLocalServer );
     settings_.setValue( "url",                  data->url );
     settings_.setValue( "useCustomFields",      data->useCustomFields );
