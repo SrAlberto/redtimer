@@ -58,6 +58,30 @@ Item {
         }
 
         Button {
+            id: copyIssue
+            width: 24
+            height: 24
+            objectName: "copyIssue"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 52
+            anchors.left: parent.left
+            tooltip: "Copy issue id"
+            iconSource: "qrc:/open-iconic/svg/clipboard.svg"
+        }
+
+        Button {
+            id: copyIssueUrl
+            width: 24
+            height: 24
+            objectName: "copyIssueUrl"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 76
+            anchors.left: parent.left
+            tooltip: "Copy issue url"
+            iconSource: "qrc:/open-iconic/svg/paperclip.svg"
+        }
+
+        Button {
             id: connectionStatus
             width: 24
             height: 24

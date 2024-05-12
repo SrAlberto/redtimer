@@ -259,6 +259,16 @@ private slots:
     void openIssue();
 
     /**
+     * @brief Copy issue id to clipboar
+     */
+    void copyIssue();
+
+    /**
+     * @brief Copy issue url to clipboar
+     */
+    void copyIssueUrl();
+
+    /**
      * @brief Get the current server name
      *
      * @todo Move to libredtimer

@@ -77,9 +77,9 @@ TODO
 - [ ] View/Edit/Add/ Notes and private notes
 - [X] Edit shortcut to load issue from id from clipboard, if not issue on clipboard open default modal
 - [X] Allow to user to decide if timer start if a issue is loaded
-- [ ] New button to copy issue id
+- [X] New button to copy issue id
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
-- [ ] New button to copy issue url
+- [X] New button to copy issue url
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
 - [X] New button to open issue url
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut

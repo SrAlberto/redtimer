@@ -100,6 +100,12 @@ namespace redtimer
         // Connect the open issue button
         connect(qml("openIssue"), SIGNAL(clicked()), this, SLOT(openIssue()));
 
+        // Connect the copy issue id button
+        connect(qml("copyIssue"), SIGNAL(clicked()), this, SLOT(copyIssue()));
+
+        // Connect the copy issue url button
+        connect(qml("copyIssueUrl"), SIGNAL(clicked()), this, SLOT(copyIssueUrl()));
+
         // Connect the settings button
         connect(qml("settings"), SIGNAL(clicked()), settings_, SLOT(display()));
 
@@ -338,6 +344,39 @@ namespace redtimer
 
         if (!QDesktopServices::openUrl(url))
             RETURN();
+
+        RETURN();
+    }
+
+    void
+    MainWindow::copyIssue()
+    {
+        ENTER();
+
+        if (issue_.id == NULL_ID)
+            RETURN();
+
+        QGuiApplication::clipboard()->setText(QString::number(issue_.id));
+
+        RETURN();
+    }
+
+    void
+    MainWindow::copyIssueUrl()
+    {
+        ENTER();
+
+        if (issue_.id == NULL_ID)
+            RETURN();
+
+        QString baseUrl = profileData()->url;
+
+        if (!baseUrl.endsWith("/"))
+            baseUrl += "/";
+
+        baseUrl += QString::asprintf("issues/%d", issue_.id);
+
+        QGuiApplication::clipboard()->setText(baseUrl);
 
         RETURN();
     }
@@ -687,9 +726,8 @@ namespace redtimer
     {
         ENTER();
 
-        QClipboard *clipboard = QGuiApplication::clipboard();
         bool ok;
-        int issueId = clipboard->text().toInt(&ok);
+        int issueId = QGuiApplication::clipboard()->text().toInt(&ok);
 
         if (!ok)
         {
