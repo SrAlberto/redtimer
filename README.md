@@ -69,7 +69,8 @@ TODO
 - [X] Adjust done ratio width
 - [X] View/Edit Assigned to
 - [X] &nbsp;&nbsp;&nbsp;&nbsp; Add assign to me
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Must change to default worked on status
+- [X] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Must change to default worked on status
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Must be configurable
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add filter field
 - [X] &nbsp;&nbsp;&nbsp;&nbsp; When status change to "Pendiente de Información" show on a new line the assigned to dropdown
 - [ ] New modal to edit dates, assigned to

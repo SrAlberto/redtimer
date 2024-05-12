@@ -1815,7 +1815,7 @@ namespace redtimer
                     issue_.assignedTo.id = assignedTo;
 
                 if (cb != nullptr)
-                    cb(true, NULL_ID, (RedmineError)RedmineError::NO_ERR, QStringList());
+                    cb();
                 else if (doneRatio != NULL_ID || statusId != NULL_ID || assignedTo != NULL_ID)
                     refreshGui();
 
