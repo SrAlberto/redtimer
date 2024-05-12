@@ -78,8 +78,8 @@ TODO
 - [X] Edit shortcut to load issue from id from clipboard, if not issue on clipboard open default modal
 - [X] Allow to user to decide if timer start if a issue is loaded
 - [X] New button to copy issue id
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
+- [X] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
 - [X] New button to copy issue url
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
+- [X] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
 - [X] New button to open issue url
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
+- [X] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut

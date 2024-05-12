@@ -72,6 +72,9 @@ private:
     QxtGlobalShortcut* shortcutSelectIssue_;
     QxtGlobalShortcut* shortcutStartStop_;
     QxtGlobalShortcut* shortcutToggle_;
+    QxtGlobalShortcut* shortcutOpenIssue_;
+    QxtGlobalShortcut* shortcutCopyIssue_;
+    QxtGlobalShortcut* shortcutCopyIssueUrl_;
 
     /// RedTimer has been initialised
     bool initialised_ = false;

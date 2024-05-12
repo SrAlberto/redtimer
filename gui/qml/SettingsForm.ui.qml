@@ -241,6 +241,39 @@ ColumnLayout {
                     placeholderText: qsTr("Ctrl+Alt+L")
                 }
 
+                Label {
+                    text: qsTr("Shortcut to open issue on default browser")
+                }
+
+                TextField {
+                    id: shortcutOpenIssue
+                    Layout.fillWidth: true
+                    objectName: "shortcutOpenIssue"
+                    placeholderText: qsTr("Ctrl+Alt+O")
+                }
+
+                Label {
+                    text: qsTr("Shortcut to copy issue id")
+                }
+
+                TextField {
+                    id: shortcutCopyIssue
+                    Layout.fillWidth: true
+                    objectName: "shortcutCopyIssue"
+                    placeholderText: qsTr("Ctrl+Alt+I")
+                }
+
+                Label {
+                    text: qsTr("Shortcut to copy issue URL")
+                }
+
+                TextField {
+                    id: shortcutCopyIssueUrl
+                    Layout.fillWidth: true
+                    objectName: "shortcutCopyIssueUrl"
+                    placeholderText: qsTr("Ctrl+Alt+U")
+                }
+
                 Item {
                     // Spacer
                     Layout.fillHeight: true

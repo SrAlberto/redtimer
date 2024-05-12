@@ -50,6 +50,9 @@ struct ProfileData
     QString shortcutSelectIssue;
     QString shortcutStartStop;
     QString shortcutToggle;
+    QString shortcutOpenIssue;
+    QString shortcutCopyIssue;
+    QString shortcutCopyIssueUrl;
 
     /// Redmine base URL
     QString url;
@@ -325,9 +328,10 @@ operator<<( QDebug debug, const redtimer::ProfileData& data )
 {
     QDebugStateSaver saver( debug );
     DEBUGFIELDS(apiKey)(ignoreSslErrors)(numRecentIssues)(shortcutCreateIssue)
-            (shortcutSelectIssue)(shortcutStartStop)(shortcutToggle)(url)(useCustomFields)
-            (useSystemTrayIcon)(closeToTray)(workedOnId)(pendingStatusId)(defaultTrackerId)(startTimeFieldId)(endTimeFieldId)
-            (activityId)(issueId)(projectId)(recentIssues);
+        (shortcutSelectIssue)(shortcutStartStop)(shortcutToggle)(shortcutOpenIssue)
+        (shortcutCopyIssue)(shortcutCopyIssueUrl)(url)(useCustomFields)(useSystemTrayIcon)
+        (closeToTray)(workedOnId)(pendingStatusId)(defaultTrackerId)(startTimeFieldId)
+        (endTimeFieldId)(activityId)(issueId)(projectId)(recentIssues);
     return debug;
 }
 

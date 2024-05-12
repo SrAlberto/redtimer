@@ -182,6 +182,9 @@ Settings::applyProfileData( bool* reload )
     data->shortcutSelectIssue   = qml("shortcutSelectIssue")->property("text").toString();
     data->shortcutStartStop     = qml("shortcutStartStop")->property("text").toString();
     data->shortcutToggle        = qml("shortcutToggle")->property("text").toString();
+    data->shortcutOpenIssue     = qml("shortcutOpenIssue")->property("text").toString();
+    data->shortcutCopyIssue     = qml("shortcutCopyIssue")->property("text").toString();
+    data->shortcutCopyIssueUrl  = qml("shortcutCopyIssueUrl")->property("text").toString();
 
     // Interface
     data->useSystemTrayIcon = qml("useSystemTrayIcon")->property("checked").toBool();
@@ -413,6 +416,18 @@ Settings::loadProfileData()
                           ? settings_.value("shortcutToggle").toString()
                           : "Ctrl+Alt+R";
 
+    data->shortcutOpenIssue = settings_.value("shortcutOpenIssue").isValid()
+                               ? settings_.value("shortcutOpenIssue").toString()
+                               : "Ctrl+Alt+O";
+
+    data->shortcutCopyIssue = settings_.value("shortcutCopyIssue").isValid()
+                                  ? settings_.value("shortcutCopyIssue").toString()
+                                  : "Ctrl+Alt+I";
+
+    data->shortcutCopyIssueUrl = settings_.value("shortcutCopyIssueUrl").isValid()
+                                  ? settings_.value("shortcutCopyIssueUrl").toString()
+                                  : "Ctrl+Alt+U";
+
     // Interface
 #ifdef Q_OS_MAC
     data->useSystemTrayIcon = true;
@@ -484,6 +499,9 @@ Settings::refresh()
     qml("shortcutSelectIssue")->setProperty( "text", profileData()->shortcutSelectIssue );
     qml("shortcutStartStop")->setProperty( "text", profileData()->shortcutStartStop );
     qml("shortcutToggle")->setProperty( "text", profileData()->shortcutToggle );
+    qml("shortcutOpenIssue")->setProperty( "text", profileData()->shortcutOpenIssue );
+    qml("shortcutCopyIssue")->setProperty( "text", profileData()->shortcutCopyIssue );
+    qml("shortcutCopyIssueUrl")->setProperty( "text", profileData()->shortcutCopyIssueUrl );
 
     updateIssueCustomFields();
     updateIssueStatuses();
@@ -557,6 +575,9 @@ Settings::saveProfileData()
     settings_.setValue("shortcutSelectIssue", data->shortcutSelectIssue );
     settings_.setValue("shortcutStartStop",   data->shortcutStartStop );
     settings_.setValue("shortcutToggle",      data->shortcutToggle );
+    settings_.setValue("shortcutOpenIssue",   data->shortcutOpenIssue );
+    settings_.setValue("shortcutCopyIssue",   data->shortcutCopyIssue );
+    settings_.setValue("shortcutCopyIssueUrl",   data->shortcutCopyIssueUrl );
 
     // Interface
     settings_.setValue( "useSystemTrayIcon", data->useSystemTrayIcon );

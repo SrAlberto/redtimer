@@ -65,10 +65,16 @@ namespace redtimer
         shortcutSelectIssue_ = new QxtGlobalShortcut(this);
         shortcutStartStop_ = new QxtGlobalShortcut(this);
         shortcutToggle_ = new QxtGlobalShortcut(this);
+        shortcutOpenIssue_ = new QxtGlobalShortcut(this);
+        shortcutCopyIssue_ = new QxtGlobalShortcut(this);
+        shortcutCopyIssueUrl_ = new QxtGlobalShortcut(this);
         connect(shortcutCreateIssue_, &QxtGlobalShortcut::activated, this, &MainWindow::createIssue);
         connect(shortcutSelectIssue_, &QxtGlobalShortcut::activated, this, &MainWindow::selectIssue);
         connect(shortcutStartStop_, &QxtGlobalShortcut::activated, this, &MainWindow::startStop);
         connect(shortcutToggle_, &QxtGlobalShortcut::activated, this, &MainWindow::toggle);
+        connect(shortcutOpenIssue_, &QxtGlobalShortcut::activated, this, &MainWindow::openIssue);
+        connect(shortcutCopyIssue_, &QxtGlobalShortcut::activated, this, &MainWindow::copyIssue);
+        connect(shortcutCopyIssueUrl_, &QxtGlobalShortcut::activated, this, &MainWindow::copyIssueUrl);
 
         // Timer initialisation
         timer_ = new QTimer(this);
@@ -1517,6 +1523,9 @@ namespace redtimer
         shortcutSelectIssue_->setShortcut(QKeySequence(data->shortcutSelectIssue));
         shortcutStartStop_->setShortcut(QKeySequence(data->shortcutStartStop));
         shortcutToggle_->setShortcut(QKeySequence(data->shortcutToggle));
+        shortcutOpenIssue_->setShortcut(QKeySequence(data->shortcutOpenIssue));
+        shortcutCopyIssue_->setShortcut(QKeySequence(data->shortcutCopyIssue));
+        shortcutCopyIssueUrl_->setShortcut(QKeySequence(data->shortcutCopyIssueUrl));
 
         initTrayIcon();
 
