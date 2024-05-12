@@ -695,6 +695,8 @@ namespace redtimer
 
                                     issue_ = issue;
 
+                                    int pendingStatusId = profileData()->pendingStatusId;
+
                                     addRecentIssue( issue );
 
                                     qml("issueId")->setProperty( "text", QString("Issue ID: %1").arg(issue.id) );
@@ -702,8 +704,8 @@ namespace redtimer
                                     qml("subject")->setProperty( "text", issue.subject );
                                     qml("subject")->setProperty( "cursorPosition", 0 );
                                     qml("description")->setProperty( "text", issue.description );
-                                    qml("assignedTo")->setProperty("visible", issue_.status.id == PENDING_STATUS);
-                                    qml("rowLayout3")->setProperty("visible", issue_.status.id == PENDING_STATUS);
+                                    qml("assignedTo")->setProperty("visible", issue_.status.id == pendingStatusId);
+                                    qml("rowLayout3")->setProperty("visible", issue_.status.id == pendingStatusId);
 
                                     QString more;
                                     if( issue.tracker.id != NULL_ID )
@@ -1042,7 +1044,8 @@ namespace redtimer
             RETURN();
 
         issue_.assignedTo.id = currentUserId_;
-        updateAssignedTo(issue_.assignedTo.id);
+
+        updateAssignedTo(currentUserId_, [=]() { start(); });
 
         RETURN();
     }
@@ -1427,8 +1430,10 @@ namespace redtimer
         loadCurrentUser();
         loadAssignees();
 
-        qml("assignedTo")->setProperty("visible", issue_.status.id == PENDING_STATUS);
-        qml("rowLayout3")->setProperty("visible", issue_.status.id == PENDING_STATUS);
+        int pendingStatusId = profileData()->pendingStatusId;
+
+        qml("assignedTo")->setProperty("visible", issue_.status.id == pendingStatusId);
+        qml("rowLayout3")->setProperty("visible", issue_.status.id == pendingStatusId);
 
         updateTitle();
 
@@ -1759,20 +1764,20 @@ namespace redtimer
     }
 
     void
-    MainWindow::updateAssignedTo(int assignedTo)
+    MainWindow::updateAssignedTo(int assignedTo, std::function<void()> cb )
     {
         ENTER();
 
         if (assignedTo == NULL_ID || issue_.id == NULL_ID)
             RETURN();
 
-        updateIssue(issue_.doneRatio, issue_.status.id, assignedTo);
+        updateIssue(issue_.doneRatio, issue_.status.id, assignedTo, cb);
 
         RETURN();
     }
 
     void
-    MainWindow::updateIssue(double doneRatio, int statusId, int assignedTo)
+    MainWindow::updateIssue(double doneRatio, int statusId, int assignedTo , std::function<void()> cb )
     {
         Issue issue;
         issue.id = issue_.id;
@@ -1806,7 +1811,12 @@ namespace redtimer
                 if (statusId != NULL_ID)
                     issue_.status.id = statusId;
 
-                if (doneRatio != NULL_ID || statusId != NULL_ID)
+                if (assignedTo != NULL_ID)
+                    issue_.assignedTo.id = assignedTo;
+
+                if (cb != nullptr)
+                    cb(true, NULL_ID, (RedmineError)RedmineError::NO_ERR, QStringList());
+                else if (doneRatio != NULL_ID || statusId != NULL_ID || assignedTo != NULL_ID)
                     refreshGui();
 
                 CBRETURN(); },

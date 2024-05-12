@@ -69,6 +69,9 @@ struct ProfileData
     /// Issue status to switch after tracking time
     int workedOnId;
 
+    /// Pending status to show assignee
+    int pendingStatusId;
+
     /// Default tracker to use in the Issue Creator
     int defaultTrackerId;
 
@@ -317,7 +320,7 @@ operator<<( QDebug debug, const redtimer::ProfileData& data )
     QDebugStateSaver saver( debug );
     DEBUGFIELDS(apiKey)(ignoreSslErrors)(numRecentIssues)(shortcutCreateIssue)
             (shortcutSelectIssue)(shortcutStartStop)(shortcutToggle)(url)(useCustomFields)
-            (useSystemTrayIcon)(closeToTray)(workedOnId)(defaultTrackerId)(startTimeFieldId)(endTimeFieldId)
+            (useSystemTrayIcon)(closeToTray)(workedOnId)(pendingStatusId)(defaultTrackerId)(startTimeFieldId)(endTimeFieldId)
             (activityId)(issueId)(projectId)(recentIssues);
     return debug;
 }

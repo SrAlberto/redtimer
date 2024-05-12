@@ -75,6 +75,19 @@ ColumnLayout {
                 }
 
                 Label {
+                    text: qsTr("Pending information issue status")
+                }
+
+                ComboBox {
+                    id: pending
+                    enabled: false
+                    Layout.fillWidth: true
+                    objectName: "pending"
+                    model: issueStatusModel
+                    textRole: "name"
+                }
+
+                Label {
                     text: qsTr("Default tracker")
                 }
 

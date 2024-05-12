@@ -194,7 +194,9 @@ Settings::applyProfileData( bool* reload )
         if( issueStatusModel_.rowCount() )
         {
             int workedOnIndex = qml("workedOn")->property("currentIndex").toInt();
+            int pendingIndex = qml("pending")->property("currentIndex").toInt();
             data->workedOnId = issueStatusModel_.at(workedOnIndex).id();
+            data->pendingStatusId = issueStatusModel_.at(pendingIndex).id();
         }
 
         if( trackerModel_.rowCount() )
@@ -227,6 +229,7 @@ Settings::applyProfileData( bool* reload )
         data->issueId    = NULL_ID;
         data->projectId  = NULL_ID;
         data->workedOnId = NULL_ID;
+        data->pendingStatusId = NULL_ID;
         data->defaultTrackerId = NULL_ID;
         data->externalIdFieldId = NULL_ID;
         data->startTimeFieldId = NULL_ID;
@@ -368,6 +371,9 @@ Settings::loadProfileData()
     data->workedOnId = settings_.value("workedOnId").isValid()
                       ? settings_.value("workedOnId").toInt()
                       : NULL_ID;
+    data->pendingStatusId = settings_.value("pendingStatusId").isValid()
+                           ? settings_.value("pendingStatusId").toInt()
+                           : NULL_ID;
     data->defaultTrackerId = settings_.value("defaultTrackerId").isValid()
                             ? settings_.value("defaultTrackerId").toInt()
                             : NULL_ID;
@@ -522,6 +528,7 @@ Settings::saveProfileData()
     settings_.setValue( "url",               data->url );
     settings_.setValue( "useCustomFields",   data->useCustomFields );
     settings_.setValue( "workedOnId",        data->workedOnId );
+    settings_.setValue( "pendingStatusId",   data->pendingStatusId );
     settings_.setValue( "defaultTrackerId",  data->defaultTrackerId );
     settings_.setValue( "externalIdFieldId", data->externalIdFieldId );
     settings_.setValue( "startTimeFieldId",  data->startTimeFieldId );
@@ -585,6 +592,10 @@ Settings::updateIssueStatuses()
         qml("workedOn")->setProperty( "currentIndex", -1 );
         qml("workedOn")->setProperty( "currentIndex", 0 );
 
+        qml("pending")->setProperty( "enabled", false );
+        qml("pending")->setProperty( "currentIndex", -1 );
+        qml("pending")->setProperty( "currentIndex", 0 );
+
         RETURN();
     }
 
@@ -608,7 +619,8 @@ Settings::updateIssueStatuses()
             CBRETURN();
         }
 
-        int currentIndex = 0;
+        int currentIndexWorkedOn = 0;
+        int currentIndexPending = 0;
 
         // Sort issues ascending by ID
         qSort( issueStatuses.begin(), issueStatuses.end(),
@@ -619,16 +631,23 @@ Settings::updateIssueStatuses()
         for( const auto& issueStatus : issueStatuses )
         {
             if( issueStatus.id == profileData()->workedOnId )
-                currentIndex = issueStatusModel_.rowCount();
+                currentIndexWorkedOn = issueStatusModel_.rowCount();
+            if( issueStatus.id == profileData()->pendingStatusId )
+                currentIndexPending = issueStatusModel_.rowCount();
 
             issueStatusModel_.push_back( SimpleItem(issueStatus) );
         }
 
-        DEBUG()(issueStatusModel_)(profileData()->workedOnId)(currentIndex);
+        DEBUG()(issueStatusModel_)(profileData()->workedOnId)(currentIndexWorkedOn);
+        DEBUG()(issueStatusModel_)(profileData()->pendingStatusId)(currentIndexPending);
 
         qml("workedOn")->setProperty( "enabled", true );
         qml("workedOn")->setProperty( "currentIndex", -1 );
-        qml("workedOn")->setProperty( "currentIndex", currentIndex );
+        qml("workedOn")->setProperty( "currentIndex", currentIndexWorkedOn );
+
+        qml("pending")->setProperty( "enabled", true );
+        qml("pending")->setProperty( "currentIndex", -1 );
+        qml("pending")->setProperty( "currentIndex", currentIndexPending );
 
         CBRETURN();
     } );

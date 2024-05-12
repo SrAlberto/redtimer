@@ -10,7 +10,6 @@
 namespace redtimer {
 
 #define NULL_ID -1
-#define PENDING_STATUS 4
 
 struct CliOptions
 {

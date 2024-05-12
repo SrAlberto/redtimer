@@ -459,8 +459,9 @@ private slots:
      * @brief Update issue status for current issue
      *
      * @param assignedTo Issue assigned to ID
+     * @param cb Callback
      */
-    void updateAssignedTo( int assignedTo );
+    void updateAssignedTo( int assignedTo, std::function<void()> cb = nullptr );
 
     /**
      * @brief Update current issue
@@ -468,8 +469,9 @@ private slots:
      * @param doneRatio Done ratio
      * @param statusId Status id
      * @param assignedTo Assinge To id
+     * @param cb Success callback
      */
-    void updateIssue( double doneRatio = NULL_ID, int statusId = NULL_ID, int assignedTo = NULL_ID );
+    void updateIssue( double doneRatio = NULL_ID, int statusId = NULL_ID, int assignedTo = NULL_ID, std::function<void()> cb = nullptr );
 
     /**
      * @brief Update the title and tray icon tool tip
