@@ -171,6 +171,7 @@ Settings::applyProfileData( bool* reload )
     data->apiKey            = qml("apikey")->property("text").toString();
     data->ignoreSslErrors   = qml("ignoreSslErrors")->property("checked").toBool();
     data->numRecentIssues   = qml("numRecentIssues")->property("text").toInt();
+    data->startAtAssignedToMe  = qml("startAtAssignedToMe")->property("checked").toBool();
     data->startLocalServer  = qml("startLocalServer")->property("checked").toBool();
     data->url               = qml("url")->property("text").toString();
     data->useCustomFields   = qml("useCustomFields")->property("checked").toBool();
@@ -351,6 +352,10 @@ Settings::loadProfileData()
                            ? settings_.value("numRecentIssues").toInt()
                            : 10;
 
+    data->startAtAssignedToMe = settings_.value("startAtAssignedToMe").isValid()
+                                 ? settings_.value("startAtAssignedToMe").toBool()
+                                 : true;
+
     data->startLocalServer = settings_.value("startLocalServer").isValid()
                            ? settings_.value("startLocalServer").toBool()
                            : true;
@@ -462,6 +467,7 @@ Settings::refresh()
     qml("closeToTray")->setProperty( "checked", profileData()->closeToTray );
     qml("ignoreSslErrors")->setProperty( "checked", profileData()->ignoreSslErrors );
     qml("numRecentIssues")->setProperty( "text", profileData()->numRecentIssues );
+    qml("startAtAssignedToMe")->setProperty( "checked", profileData()->startAtAssignedToMe );
     qml("startLocalServer")->setProperty( "checked", profileData()->startLocalServer );
     qml("url")->setProperty( "text", profileData()->url );
     qml("url")->setProperty( "cursorPosition", 0 );
@@ -521,22 +527,23 @@ Settings::saveProfileData()
     settings_.beginGroup( QString("profile-%1").arg(data_.profileData.id) );
 
     // Connection
-    settings_.setValue( "apikey",            data->apiKey );
-    settings_.setValue( "ignoreSslErrors",   data->ignoreSslErrors );
-    settings_.setValue( "numRecentIssues",   data->numRecentIssues );
-    settings_.setValue( "startLocalServer",  data->startLocalServer );
-    settings_.setValue( "url",               data->url );
-    settings_.setValue( "useCustomFields",   data->useCustomFields );
-    settings_.setValue( "workedOnId",        data->workedOnId );
-    settings_.setValue( "pendingStatusId",   data->pendingStatusId );
-    settings_.setValue( "defaultTrackerId",  data->defaultTrackerId );
-    settings_.setValue( "externalIdFieldId", data->externalIdFieldId );
-    settings_.setValue( "startTimeFieldId",  data->startTimeFieldId );
-    settings_.setValue( "endTimeFieldId",    data->endTimeFieldId );
+    settings_.setValue( "apikey",               data->apiKey );
+    settings_.setValue( "ignoreSslErrors",      data->ignoreSslErrors );
+    settings_.setValue( "numRecentIssues",      data->numRecentIssues );
+    settings_.setValue( "startAtAssignedToMe",  data->startAtAssignedToMe );
+    settings_.setValue( "startLocalServer",     data->startLocalServer );
+    settings_.setValue( "url",                  data->url );
+    settings_.setValue( "useCustomFields",      data->useCustomFields );
+    settings_.setValue( "workedOnId",           data->workedOnId );
+    settings_.setValue( "pendingStatusId",      data->pendingStatusId );
+    settings_.setValue( "defaultTrackerId",     data->defaultTrackerId );
+    settings_.setValue( "externalIdFieldId",    data->externalIdFieldId );
+    settings_.setValue( "startTimeFieldId",     data->startTimeFieldId );
+    settings_.setValue( "endTimeFieldId",       data->endTimeFieldId );
 
-    settings_.setValue( "activity", data->activityId );
-    settings_.setValue( "issue",    data->issueId );
-    settings_.setValue( "project",  data->projectId );
+    settings_.setValue( "activity",             data->activityId );
+    settings_.setValue( "issue",                data->issueId );
+    settings_.setValue( "project",              data->projectId );
 
     // Shortcuts
     settings_.setValue("shortcutCreateIssue", data->shortcutCreateIssue );

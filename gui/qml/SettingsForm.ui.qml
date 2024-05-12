@@ -101,6 +101,13 @@ ColumnLayout {
                 }
 
                 CheckBox {
+                    id: startAtAssignedToMe
+                    objectName: "startAtAssignedToMe"
+                    text: qsTr("Start timer after is assigned to me")
+                    Layout.columnSpan: 2
+                }
+
+                CheckBox {
                     id: startLocalServer
                     objectName: "startLocalServer"
                     text: qsTr("Start a local socket server")

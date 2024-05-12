@@ -57,6 +57,9 @@ struct ProfileData
     /// Use custom fields
     bool useCustomFields;
 
+    /// Start timer after is assigned to me
+    bool startAtAssignedToMe;
+
     /// Start a local socket server
     bool startLocalServer;
 

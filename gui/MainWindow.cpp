@@ -1045,7 +1045,13 @@ namespace redtimer
 
         issue_.assignedTo.id = currentUserId_;
 
-        updateAssignedTo(currentUserId_, [=]() { start(); });
+        function<void()> cb = [=]() { start(); };
+
+        bool startAtAssignedToMe = profileData() -> startAtAssignedToMe;
+        if (!startAtAssignedToMe)
+            cb = nullptr;
+
+        updateAssignedTo(currentUserId_, cb);
 
         RETURN();
     }
