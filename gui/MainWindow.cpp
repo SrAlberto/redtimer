@@ -683,7 +683,7 @@ namespace redtimer
     }
 
     void
-    MainWindow::loadIssueFromClipBoard()
+    MainWindow::loadIssueFromClipBoard(IssueCb callback)
     {
         ENTER();
 
@@ -706,13 +706,13 @@ namespace redtimer
         }
 
         bool startAfterLoadIssue = profileData()->startAfterLoadIssue;
-        loadIssue(issueId, startAfterLoadIssue);
+        loadIssue(issueId, startAfterLoadIssue, false, callback);
 
         RETURN();
     }
 
     void
-    MainWindow::loadIssue(int issueId, bool startTimer, bool saveNewIssue)
+    MainWindow::loadIssue(int issueId, bool startTimer, bool saveNewIssue, IssueCb callback)
     {
         ENTER()
         (issueId)(startTimer)(saveNewIssue);
@@ -741,6 +741,9 @@ namespace redtimer
 
                                     if( !connected() )
                                         CBRETURN();
+
+                                    if (callback != nullptr)
+                                        callback(issue, redmineError, errors);
 
                                     if( redmineError != RedmineError::NO_ERR )
                                     {
@@ -1555,10 +1558,16 @@ namespace redtimer
     {
         ENTER();
 
-        loadIssueFromClipBoard();
+        IssueCb cb = [=](Issue issue, RedmineError redmineError, QStringList errors){
+            if (redmineError != RedmineError::NO_ERR)
+            {
+                issueSelector_->setProjectId(profileData()->projectId);
+                issueSelector_->display();
+            }
+        };
 
-        // issueSelector_->setProjectId(profileData()->projectId);
-        // issueSelector_->display();
+        loadIssueFromClipBoard(cb);
+
 
         RETURN();
     }

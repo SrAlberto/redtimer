@@ -309,8 +309,9 @@ private slots:
      * @brief Load issue from Redmine
      *
      * Uses the issue ID from the clipboard.
+     * @param callback Callback after issued is tried to load
      */
-    void loadIssueFromClipBoard();
+    void loadIssueFromClipBoard(qtredmine::IssueCb callback = nullptr);
 
     /**
      * @brief Load issue from Redmine
@@ -318,8 +319,9 @@ private slots:
      * @param issueId Issue ID
      * @param startTimer Automatically start the timer after loading the issue
      * @param saveNewIssue When saving tracked time, save time for the newly loaded issue
+     * @param callback Callback after issued is tried to load
      */
-    void loadIssue( int issueId, bool startTimer = true, bool saveNewIssue = false );
+    void loadIssue( int issueId, bool startTimer = true, bool saveNewIssue = false, qtredmine::IssueCb callback = nullptr );
 
     /**
      * @brief Load issue with the specified external ID or create one if it does not exists

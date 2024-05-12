@@ -75,7 +75,8 @@ TODO
 - [X] &nbsp;&nbsp;&nbsp;&nbsp; When status change to "Pendiente de Información" show on a new line the assigned to dropdown
 - [ ] New modal to edit dates, assigned to
 - [ ] View/Edit/Add/ Notes and private notes
-- [ ] Edit shortcut to load issue from id from clipboard, if not issue on clipboard open default modal
+- [X] Edit shortcut to load issue from id from clipboard, if not issue on clipboard open default modal
+- [X] Allow to user to decide if timer start if a issue is loaded
 - [ ] New button to copy issue id
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add shortcut
 - [ ] New button to copy issue url
