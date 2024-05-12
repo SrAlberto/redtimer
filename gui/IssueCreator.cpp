@@ -368,13 +368,13 @@ IssueCreator::loadCustomFields()
             QString labelData;
             {
                 QTextStream s( &labelData );
-                s << "import QtQuick 2.5" << endl;
-                s << "import QtQuick.Controls 1.5" << endl;
-                s << "import QtQuick.Layouts 1.3" << endl;
-                s <<   "Label {" << endl;
-                s <<     "id: labelCustomField" << customField.id << endl;
-                s <<     "text: '" << customField.name << "'" << endl;
-                s <<   "}" << endl;
+                s << "import QtQuick 2.5" << Qt::endl;
+                s << "import QtQuick.Controls 1.5" << Qt::endl;
+                s << "import QtQuick.Layouts 1.3" << Qt::endl;
+                s <<   "Label {" << Qt::endl;
+                s <<     "id: labelCustomField" << customField.id << Qt::endl;
+                s <<     "text: '" << customField.name << "'" << Qt::endl;
+                s <<   "}" << Qt::endl;
             }
 
             int currentIndex = 0;
@@ -382,9 +382,9 @@ IssueCreator::loadCustomFields()
             QString entryFieldData;
             {
                 QTextStream s( &entryFieldData );
-                s << "import QtQuick 2.5" << endl;
-                s << "import QtQuick.Controls 1.5" << endl;
-                s << "import QtQuick.Layouts 1.3" << endl;
+                s << "import QtQuick 2.5" << Qt::endl;
+                s << "import QtQuick.Controls 1.5" << Qt::endl;
+                s << "import QtQuick.Layouts 1.3" << Qt::endl;
 
                 // Distinguish custom field type
                 QString entryFieldId = QString("entryField%1").arg(customField.id);
@@ -396,12 +396,12 @@ IssueCreator::loadCustomFields()
                     QString entryFieldModel = entryFieldId;
                     entryFieldModel.append("Model");
 
-                    s << "ComboBox {" << endl;
-                    s <<   entryFieldIds << endl;
-                    s <<   "model: " << entryFieldModel << endl;
-                    s <<   "textRole: \"name\"" << endl;
-                    s <<   layout << endl;
-                    s << "}" << endl;
+                    s << "ComboBox {" << Qt::endl;
+                    s <<   entryFieldIds << Qt::endl;
+                    s <<   "model: " << entryFieldModel << Qt::endl;
+                    s <<   "textRole: \"name\"" << Qt::endl;
+                    s <<   layout << Qt::endl;
+                    s << "}" << Qt::endl;
 
                     customFieldModels_[customField.id] = new SimpleModel( this );
                     customFieldModels_[customField.id]->push_back( SimpleItem(NULL_ID, "") );
@@ -428,14 +428,14 @@ IssueCreator::loadCustomFields()
                 }
                 else
                 {
-                    s << "TextField {" << endl;
-                    s <<   entryFieldIds << endl;
-                    s <<   layout << endl;
+                    s << "TextField {" << Qt::endl;
+                    s <<   entryFieldIds << Qt::endl;
+                    s <<   layout << Qt::endl;
 
                     if( customFieldValues_.count(customField.id) )
-                        s << "  text: \"" << customFieldValues_[customField.id][0] << "\"" << endl;
+                        s << "  text: \"" << customFieldValues_[customField.id][0] << "\"" << Qt::endl;
 
-                    s << "}" << endl;
+                    s << "}" << Qt::endl;
                 }
             }
 

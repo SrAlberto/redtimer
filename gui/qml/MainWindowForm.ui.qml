@@ -199,7 +199,6 @@ Item {
                 objectName: "counter"
                 text: "00:00:00"
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                // Layout.fillWidth: true
                 Layout.preferredWidth: 70
 
                 MouseArea {
@@ -229,8 +228,7 @@ Item {
 
                 ComboBox {
                     id: doneRatioCombo
-                    Layout.fillWidth: true
-                    width: doneRatioProgress.width
+                    anchors.fill: parent
                     objectName: "doneRatioCombo"
                     model: doneRatioModel
                     textRole: "name"
@@ -244,7 +242,6 @@ Item {
                 }
             }
 
-            // TODO: Desarrollar codigo
             Button {
                 id: aditionalOptions
                 Layout.preferredHeight: 24
@@ -274,13 +271,32 @@ Item {
             textRole: "name"
         }
 
-        // TODO: Desarrollar codigo
-        ComboBox {
-            id: assignedTo
+        RowLayout {
+            id: rowLayout3
+            objectName: "rowLayout3"
+            height: 26
             Layout.fillWidth: true
-            objectName: "assignedTo"
-            model: assignedToModel
-            textRole: "name"
+
+            ComboBox {
+                id: assignedTo
+                Layout.fillWidth: true
+                objectName: "assignedTo"
+                model: assignedToModel
+                textRole: "name"
+            }
+
+            Button {
+                id: assignToMe
+                Layout.preferredHeight: 24
+                Layout.preferredWidth: 24
+                objectName: "assignToMe"
+                isDefault: true
+                iconSource: "qrc:/open-iconic/svg/account-login.svg"
+                tooltip: "Assign To Me"
+                focus: true
+                activeFocusOnPress: true
+                visible: false
+            }
         }
 
         TextField {

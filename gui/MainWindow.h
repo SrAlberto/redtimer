@@ -118,6 +118,12 @@ private:
     /// Cached issue statuses
     SimpleModel issueStatusModel_;
 
+    /// Cached current user id
+    int currentUserId_ = NULL_ID;
+
+    /// Cached assigneds to
+    SimpleModel assignedToModel_;
+
     /// Recently opened issues
     IssueModel recentIssues_;
 
@@ -276,6 +282,11 @@ private slots:
     void issueStatusSelected( int index );
 
     /**
+     * @brief Slot to a selected assigned to
+     */
+    void assignedToSelected( int index );
+
+    /**
      * @brief Load issue from Redmine
      *
      * Uses the issue ID from the quick pick list.
@@ -373,6 +384,21 @@ private slots:
     void loadIssueStatuses();
 
     /**
+     * @brief Load and refresh assignees in the GUI
+     */
+    void loadAssignees();
+
+    /**
+     * @brief Load the current user
+     */
+    void loadCurrentUser();
+
+    /**
+     * @brief Set the current user
+     */
+    void setCurrentUser();
+
+    /**
      * @brief Open the issue selector and load issue
      */
     void selectIssue();
@@ -430,11 +456,20 @@ private slots:
     void updateIssueStatus( int statusId );
     
     /**
+     * @brief Update issue status for current issue
+     *
+     * @param assignedTo Issue assigned to ID
+     */
+    void updateAssignedTo( int assignedTo );
+
+    /**
      * @brief Update current issue
      *
-     * @param issue Issue object
+     * @param doneRatio Done ratio
+     * @param statusId Status id
+     * @param assignedTo Assinge To id
      */
-    void updateIssue( qtredmine::Issue issue, double doneRatio = NULL_ID, int statusId = NULL_ID );
+    void updateIssue( double doneRatio = NULL_ID, int statusId = NULL_ID, int assignedTo = NULL_ID );
 
     /**
      * @brief Update the title and tray icon tool tip

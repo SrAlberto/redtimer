@@ -31,5 +31,6 @@
         <file>qml/Settings.qml</file>
         <file>qml/SettingsForm.ui.qml</file>
         <file>open-iconic/svg/external-link.svg</file>
+        <file>open-iconic/svg/account-login.svg</file>
     </qresource>
 </RCC>

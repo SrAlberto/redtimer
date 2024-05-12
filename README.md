@@ -67,8 +67,11 @@ TODO
 
 - [X] Done ratio
 - [X] Adjust done ratio width
-- [ ] View/Edit Assigned to
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp; When status change to "Pendiente de Información" show on a new line the assigned to dropdown
+- [X] View/Edit Assigned to
+- [X] &nbsp;&nbsp;&nbsp;&nbsp; Add assign to me
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Must change to default worked on status
+- [ ] &nbsp;&nbsp;&nbsp;&nbsp; Add filter field
+- [X] &nbsp;&nbsp;&nbsp;&nbsp; When status change to "Pendiente de Información" show on a new line the assigned to dropdown
 - [ ] New modal to edit dates, assigned to
 - [ ] View/Edit/Add/ Notes and private notes
 - [ ] New shortcut to load issue from id from clipboard

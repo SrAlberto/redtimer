@@ -58,6 +58,7 @@ namespace redtimer
         qmlCounter_ = qml("counter");
 
         // Shortcuts
+        // TODO: Revisar el porque: QxtGlobalShortcut failed to register: ""
         shortcutCreateIssue_ = new QxtGlobalShortcut(this);
         shortcutSelectIssue_ = new QxtGlobalShortcut(this);
         shortcutStartStop_ = new QxtGlobalShortcut(this);
@@ -85,6 +86,7 @@ namespace redtimer
         setCtxProperty("doneRatioModel", &doneRatioModel_);
         setCtxProperty("activityModel", &activityModel_);
         setCtxProperty("issueStatusModel", &issueStatusModel_);
+        setCtxProperty("assignedToModel", &assignedToModel_);
         setCtxProperty("recentIssuesModel", &recentIssues_);
 
         // Set transient window parent
@@ -119,6 +121,12 @@ namespace redtimer
 
         // Connect the issueStatus selected signal to the issueStatusSelected slot
         connect(qml("issueStatus"), SIGNAL(activated(int)), this, SLOT(issueStatusSelected(int)));
+        
+        // Connect the assignedTo selected signal to the assignedToSelected slot
+        connect(qml("assignedTo"), SIGNAL(activated(int)), this, SLOT(assignedToSelected(int)));
+
+        // Connect the assign to me button
+        connect(qml("assignToMe"), SIGNAL(clicked()), this, SLOT(setCurrentUser()));
 
         // Connect the counter text field signals to pause or resume the displayed counted time
         connect(qml(), SIGNAL(counterEntered()), this, SLOT(pauseCounterGui()));
@@ -423,8 +431,8 @@ namespace redtimer
                 bool startBlocker = true;
                 connect(this, &MainWindow::timeEntrySaved, [&]()
                         {
-                    startBlocker = false;
-                    blocker->exit(); });
+                            startBlocker = false;
+                            blocker->exit(); });
 
                 stop();
 
@@ -543,6 +551,22 @@ namespace redtimer
     }
 
     void
+    MainWindow::assignedToSelected(int index)
+    {
+        ENTER();
+
+        qml("assignToMe")->setProperty("visible", currentUserId_ != assignedToModel_.at(index).id());
+
+        issue_.assignedTo.id = assignedToModel_.at(index).id();
+        DEBUG()
+        (index)(issue_.assignedTo.id);
+
+        updateAssignedTo(issue_.assignedTo.id);
+
+        RETURN();
+    }
+
+    void
     MainWindow::loadActivities()
     {
         ENTER();
@@ -554,39 +578,39 @@ namespace redtimer
         redmine_->retrieveTimeEntryActivities([&](Enumerations activities, RedmineError redmineError,
                                                   QStringList errors)
                                               {
-        CBENTER()(redmineError)(errors);
+                                                  CBENTER()(redmineError)(errors);
 
-        if( !connected() )
-            CBRETURN();
+                                                  if( !connected() )
+                                                      CBRETURN();
 
-        if( redmineError != RedmineError::NO_ERR )
-        {
-            QString errorMsg = tr("Could not load activities.");
-            for( const auto& error : errors )
-                errorMsg.append("\n").append(error);
+                                                  if( redmineError != RedmineError::NO_ERR )
+                                                  {
+                                                      QString errorMsg = tr("Could not load activities.");
+                                                      for( const auto& error : errors )
+                                                          errorMsg.append("\n").append(error);
 
-            message( errorMsg, QtCriticalMsg );
-            CBRETURN();
-        }
+                                                      message( errorMsg, QtCriticalMsg );
+                                                      CBRETURN();
+                                                  }
 
-        int currentIndex = 0;
+                                                  int currentIndex = 0;
 
-        activityModel_.clear();
-        activityModel_.push_back( SimpleItem(NULL_ID, "Choose activity") );
-        for( const auto& activity : activities )
-        {
-            if( activity.id == activityId_ )
-                currentIndex = activityModel_.rowCount();
+                                                  activityModel_.clear();
+                                                  activityModel_.push_back( SimpleItem(NULL_ID, "Choose activity") );
+                                                  for( const auto& activity : activities )
+                                                  {
+                                                      if( activity.id == activityId_ )
+                                                          currentIndex = activityModel_.rowCount();
 
-            activityModel_.push_back( SimpleItem(activity) );
-        }
+                                                      activityModel_.push_back( SimpleItem(activity) );
+                                                  }
 
-        DEBUG()(activityModel_)(activityId_)(currentIndex);
+                                                  DEBUG()(activityModel_)(activityId_)(currentIndex);
 
-        qml("activity")->setProperty( "currentIndex", -1 );
-        qml("activity")->setProperty( "currentIndex", currentIndex );
+                                                  qml("activity")->setProperty( "currentIndex", -1 );
+                                                  qml("activity")->setProperty( "currentIndex", currentIndex );
 
-        CBRETURN(); });
+                                                  CBRETURN(); });
 
         RETURN();
     }
@@ -654,93 +678,96 @@ namespace redtimer
         ++callbackCounter_;
         redmine_->retrieveIssue([=](Issue issue, RedmineError redmineError, QStringList errors)
                                 {
-        CBENTER()(issue)(redmineError)(errors);
+                                    CBENTER()(issue)(redmineError)(errors);
 
-        if( !connected() )
-            CBRETURN();
+                                    if( !connected() )
+                                        CBRETURN();
 
-        if( redmineError != RedmineError::NO_ERR )
-        {
-            QString errorMsg = tr("Could not load issue.");
-            for( const auto& error : errors )
-                errorMsg.append("\n").append(error);
+                                    if( redmineError != RedmineError::NO_ERR )
+                                    {
+                                        QString errorMsg = tr("Could not load issue.");
+                                        for( const auto& error : errors )
+                                            errorMsg.append("\n").append(error);
 
-            message( errorMsg, QtCriticalMsg );
-            CBRETURN();
-        }
+                                        message( errorMsg, QtCriticalMsg );
+                                        CBRETURN();
+                                    }
 
-        issue_ = issue;
+                                    issue_ = issue;
 
-        addRecentIssue( issue );
+                                    addRecentIssue( issue );
 
-        qml("issueId")->setProperty( "text", QString("Issue ID: %1").arg(issue.id) );
-        qml("issueId")->setProperty( "cursorPosition", 0 );
-        qml("subject")->setProperty( "text", issue.subject );
-        qml("subject")->setProperty( "cursorPosition", 0 );
-        qml("description")->setProperty( "text", issue.description );
+                                    qml("issueId")->setProperty( "text", QString("Issue ID: %1").arg(issue.id) );
+                                    qml("issueId")->setProperty( "cursorPosition", 0 );
+                                    qml("subject")->setProperty( "text", issue.subject );
+                                    qml("subject")->setProperty( "cursorPosition", 0 );
+                                    qml("description")->setProperty( "text", issue.description );
+                                    qml("assignedTo")->setProperty("visible", issue_.status.id == PENDING_STATUS);
+                                    qml("rowLayout3")->setProperty("visible", issue_.status.id == PENDING_STATUS);
 
-        QString more;
-        if( issue.tracker.id != NULL_ID )
-            more.append( QString("<b>Tracker:</b> %1<br>").arg(issue.tracker.name) );
-        if( issue.category.id != NULL_ID )
-            more.append( QString("<b>Category:</b> %1<br>").arg(issue.category.name) );
-        if( issue.version.id != NULL_ID )
-            more.append( QString("<b>Target version:</b> %1<br>").arg(issue.version.name) );
-        if( issue.parentId != NULL_ID )
-            more.append( QString("<b>Parent issue ID:</b> %1<br>").arg(issue.parentId) );
+                                    QString more;
+                                    if( issue.tracker.id != NULL_ID )
+                                        more.append( QString("<b>Tracker:</b> %1<br>").arg(issue.tracker.name) );
+                                    if( issue.category.id != NULL_ID )
+                                        more.append( QString("<b>Category:</b> %1<br>").arg(issue.category.name) );
+                                    if( issue.version.id != NULL_ID )
+                                        more.append( QString("<b>Target version:</b> %1<br>").arg(issue.version.name) );
+                                    if( issue.parentId != NULL_ID )
+                                        more.append( QString("<b>Parent issue ID:</b> %1<br>").arg(issue.parentId) );
 
-        QString customFields;
-        bool displayCustomFields = false;
-        for( const auto& customField : issue.customFields )
-        {
-            if( !customField.values.size()
-                || (customField.values.size() == 1 && customField.values[0].isEmpty()) )
-                continue;
+                                    QString customFields;
+                                    bool displayCustomFields = false;
+                                    for( const auto& customField : issue.customFields )
+                                    {
+                                        if( !customField.values.size()
+                                            || (customField.values.size() == 1 && customField.values[0].isEmpty()) )
+                                            continue;
 
-            displayCustomFields = true;
+                                        displayCustomFields = true;
 
-            QString value;
+                                        QString value;
 
-            for( const auto& val : customField.values )
-            {
-                if( !value.isEmpty() )
-                    value.append( ", " );
+                                        for( const auto& val : customField.values )
+                                        {
+                                            if( !value.isEmpty() )
+                                                value.append( ", " );
 
-                value.append( val );
-            }
+                                            value.append( val );
+                                        }
 
-            customFields.append( QString("<b>%1:</b> %2<br>").arg(customField.name).arg(value) );
-        }
-        if( displayCustomFields )
-            more.append( customFields );
+                                        customFields.append( QString("<b>%1:</b> %2<br>").arg(customField.name).arg(value) );
+                                    }
+                                    if( displayCustomFields )
+                                        more.append( customFields );
 
-        if( more.isEmpty() )
-        {
-            qml("more")->setProperty( "visible", false );
-        }
-        else
-        {
-            // Remove the last <br>
-            more.chop(4);
-            qml("more")->setProperty( "text", more );
-            qml("more")->setProperty( "visible", true );
-        }
+                                    if( more.isEmpty() )
+                                    {
+                                        qml("more")->setProperty( "visible", false );
+                                    }
+                                    else
+                                    {
+                                        // Remove the last <br>
+                                        more.chop(4);
+                                        qml("more")->setProperty( "text", more );
+                                        qml("more")->setProperty( "visible", true );
+                                    }
 
-        loadLatestActivity();
-        loadIssueStatuses();
-        loadDoneRatios();
+                                    loadLatestActivity();
+                                    loadIssueStatuses();
+                                    loadDoneRatios();
+                                    loadAssignees();
 
-        updateTitle();
+                                    updateTitle();
 
-        bool issueLocked = qml("issueStatus")->property( "enabled" ).toBool();
-        // bool issueLocked = false;
+                                    bool issueLocked = qml("issueStatus")->property( "enabled" ).toBool();
+                                    // bool issueLocked = false;
 
-        if( startTimer && !issueLocked )
-            start();
+                                    if( startTimer && !issueLocked )
+                                        start();
 
-        saveSettings();
+                                    saveSettings();
 
-        CBRETURN(); },
+                                    CBRETURN(); },
                                 issueId);
 
         RETURN();
@@ -751,43 +778,11 @@ namespace redtimer
     {
         ENTER();
 
-        if (!connected())
-            RETURN();
-
-        // TODO: A desarrollar
-        // ++callbackCounter_;
-        // redmine_->retrieveIssueStatuses( [&]( IssueStatuses issueStatuses, RedmineError redmineError,
-        //                                       QStringList errors )
-        // {
-        //     CBENTER()(redmineError)(errors);
-
-        //     if( !connected() )
-        //         CBRETURN();
-
-        //     if( redmineError != RedmineError::NO_ERR )
-        //     {
-        //         QString errorMsg = tr( "Could not load issue statuses." );
-        //         for( const auto& error : errors )
-        //             errorMsg.append("\n").append(error);
-
-        //         message( errorMsg, QtCriticalMsg );
-        //         CBRETURN();
-        //     }
-
         int currentIndex = 0;
 
         QList<Item> doneRatios;
-        doneRatios.append({0, "0 %"});
-        doneRatios.append({10, "10 %"});
-        doneRatios.append({20, "20 %"});
-        doneRatios.append({30, "30 %"});
-        doneRatios.append({40, "40 %"});
-        doneRatios.append({50, "50 %"});
-        doneRatios.append({60, "60 %"});
-        doneRatios.append({70, "70 %"});
-        doneRatios.append({80, "80 %"});
-        doneRatios.append({90, "90 %"});
-        doneRatios.append({100, "100 %"});
+        for(int i = 0; i <= 100; i += 10)
+            doneRatios.append({i, QString::number(i) + " %"});
 
         doneRatioModel_.clear();
         for (const auto &doneRatio : doneRatios)
@@ -804,70 +799,9 @@ namespace redtimer
         qml("doneRatioCombo")->setProperty("currentIndex", currentIndex);
         qml("doneRatioProgress")->setProperty("value", issue_.doneRatio);
 
-        //     CBRETURN();
-        // }, issue_.id );
-
         RETURN();
     }
 
-    void
-    MainWindow::loadIssueStatuses()
-    {
-        ENTER();
-
-        if (!connected())
-            RETURN();
-
-        ++callbackCounter_;
-        redmine_->retrieveIssueStatuses([&](IssueStatuses issueStatuses, RedmineError redmineError,
-                                            QStringList errors)
-                                        {
-        CBENTER()(redmineError)(errors);
-
-        if( !connected() )
-            CBRETURN();
-
-        if( redmineError != RedmineError::NO_ERR )
-        {
-            QString errorMsg = tr( "Could not load issue statuses." );
-            for( const auto& error : errors )
-                errorMsg.append("\n").append(error);
-
-            message( errorMsg, QtCriticalMsg );
-            CBRETURN();
-        }
-
-        int currentIndex = 0;
-
-        qml("issueStatus")->setProperty( "enabled", true );
-
-        issueStatusModel_.clear();
-        issueStatusModel_.push_back( SimpleItem(NULL_ID, "Choose issue status") );
-        for( const auto& issueStatus : issueStatuses )
-        {
-            if( issueStatus.id == issue_.status.id )
-                currentIndex = issueStatusModel_.rowCount();
-
-            issueStatusModel_.push_back( SimpleItem(issueStatus) );
-        }
-
-        if  (issue_.id != NULL_ID && issueStatuses.length() == 0)
-        {
-            issueStatusModel_.push_back( issue_.status );
-            currentIndex = 1;
-            qml("issueStatus")->setProperty( "enabled", false );
-        }
-
-        DEBUG()(issueStatusModel_)(issue_.status.id)(currentIndex);
-
-        qml("issueStatus")->setProperty( "currentIndex", -1 );
-        qml("issueStatus")->setProperty( "currentIndex", currentIndex );
-
-        CBRETURN(); },
-                                        issue_.id);
-
-        RETURN();
-    }
 
     void
     MainWindow::loadLatestActivity()
@@ -887,28 +821,228 @@ namespace redtimer
         redmine_->retrieveTimeEntries([&](TimeEntries timeEntries, RedmineError redmineError,
                                           QStringList errors)
                                       {
-        CBENTER()(redmineError)(errors);
+                                          CBENTER()(redmineError)(errors);
+
+                                          if( !connected() )
+                                              CBRETURN();
+
+                                          if( redmineError != RedmineError::NO_ERR )
+                                          {
+                                              QString errorMsg = tr( "Could not load time entries." );
+                                              for( const auto& error : errors )
+                                                  errorMsg.append("\n").append(error);
+
+                                              message( errorMsg, QtCriticalMsg );
+                                              CBRETURN();
+                                          }
+
+                                          if( timeEntries.size() == 1 && timeEntries[0].activity.id != NULL_ID )
+                                              activityId_ = timeEntries[0].activity.id;
+
+                                          loadActivities();
+
+                                          CBRETURN(); },
+                                      QString("issue_id=%1&limit=1").arg(issue_.id));
+
+        RETURN();
+    }
+
+    void
+    MainWindow::loadIssueStatuses()
+    {
+        ENTER();
+
+        if (!connected())
+            RETURN();
+
+        ++callbackCounter_;
+        redmine_->retrieveIssueStatuses([&](IssueStatuses issueStatuses, RedmineError redmineError,
+                                            QStringList errors)
+                                        {
+                                            CBENTER()(redmineError)(errors);
+
+                                            if( !connected() )
+                                                CBRETURN();
+
+                                            if( redmineError != RedmineError::NO_ERR )
+                                            {
+                                                QString errorMsg = tr( "Could not load issue statuses." );
+                                                for( const auto& error : errors )
+                                                    errorMsg.append("\n").append(error);
+
+                                                message( errorMsg, QtCriticalMsg );
+                                                CBRETURN();
+                                            }
+
+                                            int currentIndex = 0;
+
+                                            qml("issueStatus")->setProperty( "enabled", true );
+
+                                            issueStatusModel_.clear();
+                                            issueStatusModel_.push_back( SimpleItem(NULL_ID, "Choose issue status") );
+                                            for( const auto& issueStatus : issueStatuses )
+                                            {
+                                                if( issueStatus.id == issue_.status.id )
+                                                    currentIndex = issueStatusModel_.rowCount();
+
+                                                issueStatusModel_.push_back( SimpleItem(issueStatus) );
+                                            }
+
+                                            if  (issue_.id != NULL_ID && issueStatuses.length() == 0)
+                                            {
+                                                issueStatusModel_.push_back( issue_.status );
+                                                currentIndex = 1;
+                                                qml("issueStatus")->setProperty( "enabled", false );
+                                            }
+
+                                            DEBUG()(issueStatusModel_)(issue_.status.id)(currentIndex);
+
+                                            qml("issueStatus")->setProperty( "currentIndex", -1 );
+                                            qml("issueStatus")->setProperty( "currentIndex", currentIndex );
+
+                                            CBRETURN(); },
+                                        issue_.id);
+
+        RETURN();
+    }
+
+    void
+    MainWindow::loadAssignees()
+    {
+        ENTER();
+
+        if( issue_.project.id == NULL_ID )
+            RETURN();
 
         if( !connected() )
-            CBRETURN();
+            RETURN();
 
-        if( redmineError != RedmineError::NO_ERR )
-        {
-            QString errorMsg = tr( "Could not load time entries." );
-            for( const auto& error : errors )
-                errorMsg.append("\n").append(error);
+        ++callbackCounter_;
+        redmine_->retrieveMemberships( [=]( Memberships assignees, RedmineError redmineError, QStringList errors )
+                                      {
+                                          CBENTER()(assignees)(redmineError)(errors);
 
-            message( errorMsg, QtCriticalMsg );
-            CBRETURN();
-        }
+                                          if( redmineError != RedmineError::NO_ERR )
+                                          {
+                                              QString errorMsg = tr("Could not load assignees.");
+                                              for( const auto& error : errors )
+                                                  errorMsg.append("\n").append(error);
 
-        if( timeEntries.size() == 1 && timeEntries[0].activity.id != NULL_ID )
-            activityId_ = timeEntries[0].activity.id;
+                                              message( errorMsg, QtCriticalMsg );
+                                              CBRETURN();
+                                          }
 
-        loadActivities();
+                                          assignedToModel_.clear();
+                                          qml("assignedTo")->setProperty( "currentIndex", -1 );
 
-        CBRETURN(); },
-                                      QString("issue_id=%1&limit=1").arg(issue_.id));
+                                          // Sort assignees by name
+                                          sort( assignees.begin(), assignees.end(),
+                                               []( const Membership& l, const Membership& r )
+                                               {
+                                                   QString lname, rname;
+
+                                                   if( l.user.id != NULL_ID )
+                                                       lname = l.user.name;
+                                                   else if( l.group.id != NULL_ID )
+                                                       lname = l.group.name;
+
+                                                   if( r.user.id != NULL_ID )
+                                                       rname = r.user.name;
+                                                   else if( r.group.id != NULL_ID )
+                                                       rname = r.group.name;
+
+                                                   return lname < rname;
+                                               } );
+
+                                          if( assignees.size() <= 1 )
+                                              qml("assignedTo")->setProperty( "enabled", false );
+                                          else
+                                          {
+                                              int currentIndex = 0;
+
+                                              assignedToModel_.push_back( SimpleItem(NULL_ID, "") );
+
+                                              SimpleModel groups;
+
+                                              for( const auto& assignee : assignees )
+                                              {
+                                                  if( assignee.user.id == issue_.assignedTo.id || assignee.group.id == issue_.assignedTo.id )
+                                                  {
+                                                      currentIndex = assignedToModel_.rowCount();
+                                                      DEBUG("Selecting assignee")(assignee);
+                                                  }
+
+                                                  if( assignee.user.id != NULL_ID )
+                                                      assignedToModel_.push_back( SimpleItem(assignee.user) );
+                                                  else if( assignee.group.id != NULL_ID )
+                                                      groups.push_back( SimpleItem(assignee.group) );
+                                              }
+
+                                              for (const SimpleItem& group : groups.data())
+                                                  assignedToModel_.push_back( group );
+
+                                              qml("assignedTo")->setProperty( "currentIndex", currentIndex );
+                                              qml("assignedTo")->setProperty( "enabled", true );
+
+                                              if (currentUserId_ != assignedToModel_.at(currentIndex).id())
+                                                  qml("assignToMe")->setProperty("visible", true);
+                                              else
+                                                  qml("assignToMe")->setProperty("visible", false);
+
+                                              DEBUG()(assignedToModel_)(currentIndex);
+                                          }
+
+                                          CBRETURN();
+                                      },
+                                      issue_.project.id,
+                                      QString("limit=100") );
+    }
+
+
+    void
+    MainWindow::loadCurrentUser()
+    {
+        ENTER();
+
+        if( currentUserId_ != NULL_ID )
+            RETURN();
+
+        if( !connected() )
+            RETURN();
+
+        ++callbackCounter_;
+        redmine_->retrieveCurrentUser( [&]( User user, RedmineError redmineError, QStringList errors )
+                                      {
+                                          CBENTER();
+
+                                          if( redmineError != RedmineError::NO_ERR )
+                                          {
+                                              QString errorMsg = tr("Could not load current user.");
+                                              for( const auto& error : errors )
+                                                  errorMsg.append("\n").append(error);
+
+                                              message( errorMsg, QtCriticalMsg );
+                                              CBRETURN();
+                                          }
+
+                                          currentUserId_ = user.id;
+
+                                          CBRETURN();
+                                      } );
+
+        RETURN();
+    }
+
+    void
+    MainWindow::setCurrentUser()
+    {
+        ENTER();
+
+        if( !connected() )
+            RETURN();
+
+        issue_.assignedTo.id = currentUserId_;
+        updateAssignedTo(issue_.assignedTo.id);
 
         RETURN();
     }
@@ -970,32 +1104,32 @@ namespace redtimer
             ++callbackCounter_;
             redmine_->sendIssue(issue, [=](bool success, int id, RedmineError errorCode, QStringList errors)
                                 {
-            CBENTER();
+                                    CBENTER();
 
-            DEBUG()(issue)(success)(id)(errorCode)(errors);
+                                    DEBUG()(issue)(success)(id)(errorCode)(errors);
 
-            if( !success )
-            {
-                QString errorMsg = tr( "CLI: Could not create issue." );
-                for( const auto& error : errors )
-                    errorMsg.append("\n").append(error);
+                                    if( !success )
+                                    {
+                                        QString errorMsg = tr( "CLI: Could not create issue." );
+                                        for( const auto& error : errors )
+                                            errorMsg.append("\n").append(error);
 
-                message( errorMsg, QtCriticalMsg );
+                                        message( errorMsg, QtCriticalMsg );
 
-                semaphore->release();
-                delete semaphore;
+                                        semaphore->release();
+                                        delete semaphore;
 
-                CBRETURN();
-            }
+                                        CBRETURN();
+                                    }
 
-            message( tr("CLI: New issue created with ID %1").arg(id) );
+                                    message( tr("CLI: New issue created with ID %1").arg(id) );
 
-            loadIssue( id );
+                                    loadIssue( id );
 
-            semaphore->release();
-            delete semaphore;
+                                    semaphore->release();
+                                    delete semaphore;
 
-            CBRETURN(); });
+                                    CBRETURN(); });
 
             RETURN();
         };
@@ -1013,12 +1147,12 @@ namespace redtimer
                     ++callbackCounter_;
                     redmine_->retrieveIssue([=](Issue issue, RedmineError redmineError, QStringList errors)
                                             {
-                    CBENTER()(issue)(redmineError)(errors);
+                                                CBENTER()(issue)(redmineError)(errors);
 
-                    // Exactly one issue found, loading it
-                    create( issue.id );
+                                                // Exactly one issue found, loading it
+                                                create( issue.id );
 
-                    CBRETURN(); },
+                                                CBRETURN(); },
                                             options.parentId);
                 }
                 else if (!options.externalParentId.isEmpty())
@@ -1041,20 +1175,20 @@ namespace redtimer
                     ++callbackCounter_;
                     redmine_->retrieveIssues([=](Issues issues, RedmineError redmineError, QStringList errors)
                                              {
-                    CBENTER()(issues)(redmineError)(errors);
+                                                 CBENTER()(issues)(redmineError)(errors);
 
-                    if( issues.count() != 1 )
-                    {
-                        // No exact match found for parent
-                        create();
+                                                 if( issues.count() != 1 )
+                                                 {
+                                                     // No exact match found for parent
+                                                     create();
 
-                        CBRETURN();
-                    }
+                                                     CBRETURN();
+                                                 }
 
-                    // Exactly one parent found
-                    create( issues[0].id );
+                                                 // Exactly one parent found
+                                                 create( issues[0].id );
 
-                    CBRETURN(); },
+                                                 CBRETURN(); },
                                              redmineOptions);
                 }
             }
@@ -1087,32 +1221,32 @@ namespace redtimer
             ++callbackCounter_;
             redmine_->retrieveIssues([=](Issues issues, RedmineError redmineError, QStringList errors)
                                      {
-            CBENTER()(issues)(redmineError)(errors);
+                                         CBENTER()(issues)(redmineError)(errors);
 
-            if( issues.count() > 1 )
-            {
-                // Multiple issues found, doing nothing
-                semaphore->release();
-                delete semaphore;
+                                         if( issues.count() > 1 )
+                                         {
+                                             // Multiple issues found, doing nothing
+                                             semaphore->release();
+                                             delete semaphore;
 
-                CBRETURN();
-            }
+                                             CBRETURN();
+                                         }
 
-            if( issues.count() == 0 )
-            {
-                // No issue found, creating one
-                createAndFindParent();
+                                         if( issues.count() == 0 )
+                                         {
+                                             // No issue found, creating one
+                                             createAndFindParent();
 
-                CBRETURN();
-            }
+                                             CBRETURN();
+                                         }
 
-            // Exactly one issue found, loading it
-            loadIssue( issues[0].id );
+                                         // Exactly one issue found, loading it
+                                         loadIssue( issues[0].id );
 
-            semaphore->release();
-            delete semaphore;
+                                         semaphore->release();
+                                         delete semaphore;
 
-            CBRETURN(); },
+                                         CBRETURN(); },
                                      redmineOptions);
         }
         else
@@ -1290,6 +1424,11 @@ namespace redtimer
         loadLatestActivity();
         loadIssueStatuses();
         loadDoneRatios();
+        loadCurrentUser();
+        loadAssignees();
+
+        qml("assignedTo")->setProperty("visible", issue_.status.id == PENDING_STATUS);
+        qml("rowLayout3")->setProperty("visible", issue_.status.id == PENDING_STATUS);
 
         updateTitle();
 
@@ -1501,43 +1640,43 @@ namespace redtimer
         ++callbackCounter_;
         redmine_->sendTimeEntry(timeEntry, [=](bool success, int id, RedmineError errorCode, QStringList errors)
                                 {
-        CBENTER()(success)(id)(errorCode)(errors);
+                                    CBENTER()(success)(id)(errorCode)(errors);
 
-        if( !success && errorCode != RedmineError::ERR_TIME_ENTRY_TOO_SHORT )
-        {
-            QString errorMsg = tr( "Could not save the time entry." );
-            for( const auto& error : errors )
-                errorMsg.append("\n").append(error);
-            message( errorMsg, QtCriticalMsg );
+                                    if( !success && errorCode != RedmineError::ERR_TIME_ENTRY_TOO_SHORT )
+                                    {
+                                        QString errorMsg = tr( "Could not save the time entry." );
+                                        for( const auto& error : errors )
+                                            errorMsg.append("\n").append(error);
+                                        message( errorMsg, QtCriticalMsg );
 
-            if( cb )
-                cb( success, id, errorCode, errors );
+                                        if( cb )
+                                            cb( success, id, errorCode, errors );
 
-            CBRETURN();
-        }
+                                        CBRETURN();
+                                    }
 
-        if( errorCode == RedmineError::ERR_TIME_ENTRY_TOO_SHORT && stopTimerAfterSaving )
-            message( tr("Not saving too short time entries."), QtWarningMsg );
+                                    if( errorCode == RedmineError::ERR_TIME_ENTRY_TOO_SHORT && stopTimerAfterSaving )
+                                        message( tr("Not saving too short time entries."), QtWarningMsg );
 
-        if( !stopTimerAfterSaving )
-            startTimer();
+                                    if( !stopTimerAfterSaving )
+                                        startTimer();
 
-        if( success )
-            message( tr("Saved time %1").arg(QTime(0, 0, 0).addSecs(counter()).toString("HH:mm:ss")) );
+                                    if( success )
+                                        message( tr("Saved time %1").arg(QTime(0, 0, 0).addSecs(counter()).toString("HH:mm:ss")) );
 
-        if( success || (resetTimerOnError && errorCode != RedmineError::ERR_TIME_ENTRY_TOO_SHORT) )
-        {
-            counterDiff_ = 0;
-            qmlCounter_->setProperty( "text", "00:00:00" );
-        }
+                                    if( success || (resetTimerOnError && errorCode != RedmineError::ERR_TIME_ENTRY_TOO_SHORT) )
+                                    {
+                                        counterDiff_ = 0;
+                                        qmlCounter_->setProperty( "text", "00:00:00" );
+                                    }
 
-        DEBUG() << "Emitting signal timeEntrySaved()";
-        emit timeEntrySaved();
+                                    DEBUG() << "Emitting signal timeEntrySaved()";
+                                    emit timeEntrySaved();
 
-        if( cb )
-            cb( true, id, errorCode, errors );
+                                    if( cb )
+                                        cb( true, id, errorCode, errors );
 
-        CBRETURN(); });
+                                    CBRETURN(); });
 
         RETURN();
     }
@@ -1601,11 +1740,7 @@ namespace redtimer
         if (doneRatio == NULL_ID || issue_.id == NULL_ID)
             RETURN();
 
-        Issue issue;
-        issue.doneRatio = doneRatio;
-        issue.status.id = issue_.status.id;
-
-        updateIssue(issue, doneRatio, issue_.status.id);
+        updateIssue(doneRatio, issue_.status.id, issue_.assignedTo.id);
 
         RETURN();
     }
@@ -1618,19 +1753,32 @@ namespace redtimer
         if (statusId == NULL_ID || issue_.id == NULL_ID)
             RETURN();
 
-        Issue issue;
-        issue.doneRatio = issue_.doneRatio;
-        issue.status.id = statusId;
-
-        updateIssue(issue, issue_.doneRatio, statusId);
+        updateIssue(issue_.doneRatio, statusId, issue_.assignedTo.id);
 
         RETURN();
     }
 
     void
-    MainWindow::updateIssue(Issue issue, double doneRatio, int statusId)
+    MainWindow::updateAssignedTo(int assignedTo)
     {
+        ENTER();
+
+        if (assignedTo == NULL_ID || issue_.id == NULL_ID)
+            RETURN();
+
+        updateIssue(issue_.doneRatio, issue_.status.id, assignedTo);
+
+        RETURN();
+    }
+
+    void
+    MainWindow::updateIssue(double doneRatio, int statusId, int assignedTo)
+    {
+        Issue issue;
         issue.id = issue_.id;
+        issue.doneRatio = doneRatio;
+        issue.status.id = statusId;
+        issue.assignedTo.id = assignedTo;
 
         ++callbackCounter_;
         redmine_->sendIssue(
@@ -1654,17 +1802,9 @@ namespace redtimer
 
                 if (doneRatio != NULL_ID)
                     issue_.doneRatio = doneRatio;
-                // {
-                    // issue_.doneRatio = doneRatio;
-                    // loadDoneRatios();
-                // }
 
                 if (statusId != NULL_ID)
                     issue_.status.id = statusId;
-                // {
-                    // refreshGui();
-                    // loadIssueStatuses();
-                // }
 
                 if (doneRatio != NULL_ID || statusId != NULL_ID)
                     refreshGui();
